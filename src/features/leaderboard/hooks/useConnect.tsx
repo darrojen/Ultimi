@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { useAuth } from './useAuth';
 
 export const useConnect = () => {
-  const { currentUserId } = useAuth();
+  const  currentUserId  = useAuth();
 
   const handleConnect = async (toUserId: string) => {
     if (!currentUserId) {

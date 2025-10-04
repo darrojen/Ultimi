@@ -332,7 +332,7 @@ export const DashboardModule = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       // className={`min-h-screen flex-1 max-h-[100vh] p-4 sm:p-6 lg:p-8 ${
-      className={`flex-1 max-h-[fit-content] p-4 sm:p-6 lg:p-8 ${
+      className={`flex-1 max-h-[fit-content] pb-30 p-4 sm:p-6 lg:p-8 sm:pb-0 ${
         theme === 'custom'
           ? 'bg-slate-50 text-gray-900'
           : theme === 'light'
@@ -340,6 +340,10 @@ export const DashboardModule = () => {
           : 'bg-[#16161a] text-gray-100'
       } flex-1 grid grid-cols-1 gap-6`}
     >
+      <head>
+        <title>Dashboard | Ultimi</title>
+        <meta name="description" content="Learn more about us." />
+      </head>
       <h1
         className={`text-2xl sm:text-3xl font-bold mb-6 text-center sm:text-left bg-gradient-to-r ${
           theme === 'custom'
@@ -665,7 +669,7 @@ export const DashboardModule = () => {
                       <div className="grid grid-cols-2 gap-2 items-center">
                         <div className="flex items-center gap-2">
                           <div
-                            className={`flex items-center justify-center w-8 h-8 rounded-full ${getRankColor(
+                             className={`flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0 ${getRankColor(
                               rank
                             )}`}
                           >

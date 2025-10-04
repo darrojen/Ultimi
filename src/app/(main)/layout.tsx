@@ -33,17 +33,16 @@ function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <Box className="flex min-h-screen">
       <Sidebar /> 
-      {/* prevent sidebar from shrinking */}
-      <SidebarTrigger className='relative'/>
+      {/* <SidebarTrigger className='relative'/> */}
       <Box
         as="main"
         className="flex-1 flex flex-col transition-all duration-300" // flex-1 fills remaining space
       >
-              {/* <SidebarTrigger size="icon" className='absolute'/> */}
+      <SidebarTrigger size="icon" className='z-100000 absolute ml-[7px] hidden sm:block'/>
 
 
         {/* Main content */}
-        <Box className="flex-1  overflow-auto">{children}</Box>
+        <Box className="flex-1 overflow-auto">{children}</Box>
       </Box>
     </Box>
   )

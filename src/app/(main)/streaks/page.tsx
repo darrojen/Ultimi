@@ -223,12 +223,16 @@ export default function Streaks() {
     //   </motion.div>
     // </motion.div>
   <motion.div
+  
       className="min-h-screen flex flex-col items-center justify-center px-4 py-6 sm:px-6 lg:px-8"
       style={{ background: backgroundGradient }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8, ease: 'easeInOut', delay: 0.2 }}
     >
+       <head>
+        <title>Streak | Ultimi</title>
+      </head>
       {/* Energy effect + Icon */}
       <motion.div
         className="relative flex flex-col items-center mb-6 mt-6 sm:mb-8 sm:mt-8"

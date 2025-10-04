@@ -54,6 +54,7 @@
     "react-confetti": "^6.4.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.63.0",
+    "react-media-recorder": "^1.7.2",
     "react-tsparticles": "^2.12.2",
     "recharts": "^2.15.4",
     "resend": "^6.1.0",
@@ -64,7 +65,8 @@
     "three-stdlib": "^2.36.0",
     "tsparticles": "^3.9.1",
     "uuid": "^13.0.0",
-    "vanta": "^0.5.24"
+    "vanta": "^0.5.24",
+    "wavesurfer.js": "^7.10.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -268,7 +268,7 @@ export default function RegisterPage() {
 
           <Box className="grid gap-2 relative">
             <Label>Password</Label>
-            <div className="relative">
+            <Box className="relative">
               <Input
                 type={showPassword ? 'text' : 'password'}
                 required
@@ -276,43 +276,43 @@ export default function RegisterPage() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="Enter your password"
               />
-              <span
+              <Box as="div"
                 className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-muted-foreground"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </span>
-            </div>
+              </Box>
+            </Box>
             {showStrength && (
-              <div className="mt-2 space-y-1">
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
+              <Box as="div" className="mt-2 space-y-1">
+                <Box as="div" className="flex items-center gap-2">
+                  <Box as="div" className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <Box as="div"
                       className={`h-full rounded-full transition-all duration-300 ${getStrengthColor()}`}
                       style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-sm font-medium text-muted-foreground">
+                    ></Box>
+                  </Box>
+                  <Box as="div" className="text-sm font-medium text-muted-foreground">
                     {getStrengthLabel()}
-                  </span>
-                </div>
-                <div className="space-y-1">
+                  </Box>
+                </Box>
+                <Box as="div" className="space-y-1">
                   {rules.map((rule) => (
-                    <div
+                    <Box as="div"
                       key={rule.key}
                       className="flex items-center gap-2 text-xs transition-colors duration-200"
                     >
-                      <div
+                      <Box as="div"
                         className={`w-2 h-2 rounded-full transition-colors duration-200 ${
                           criteria[rule.key as keyof typeof criteria] ? 'bg-green-500' : 'bg-gray-300'
                         }`}
-                      ></div>
-                      <span className={criteria[rule.key as keyof typeof criteria] ? 'text-green-600' : 'text-gray-500'}>
+                      ></Box>
+                      <Box as="div" className={criteria[rule.key as keyof typeof criteria] ? 'text-green-600' : 'text-gray-500'}>
                         {rule.label}
-                      </span>
-                    </div>
+                      </Box>
+                    </Box>
                   ))}
-                </div>
+                </Box>
                 {passwordStrength < 5 && (
                   <Button
                     variant="ghost"
@@ -323,7 +323,7 @@ export default function RegisterPage() {
                     Generate strong password
                   </Button>
                 )}
-              </div>
+              </Box>
             )}
           </Box>
 
@@ -337,12 +337,12 @@ export default function RegisterPage() {
                 onChange={e => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
               />
-              <span
+              <Box as="div"
                 className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-muted-foreground"
                 onClick={() => setShowConfirm(!showConfirm)}
               >
                 {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-              </span>
+              </Box>
             </div>
           </Box>
 

@@ -474,7 +474,7 @@ export default function ProfileSetupPage() {
         )}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr,3fr] gap-4 sm:gap-6 max-w-6xl mx-auto">
+      <div className="grid pb-[65px] sm:pb-[0px] grid-cols-1 lg:grid-cols-[1fr,3fr] gap-4 sm:gap-6 max-w-6xl mx-auto">
         <Box className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
           <h3 className="font-semibold">Profile Completion</h3>
           <div className="w-full bg-gray-200 dark:bg-gray-700 h-2.5 rounded-full my-3">

@@ -204,6 +204,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
 import { LeaderboardEntry } from '@/lib/types';
 import { cartoonAvatars } from '@/schema/dashboard/mock-data';
+import { useTheme } from 'next-themes';
+import { useAuth } from '@/features/leaderboard/hooks';
 
 interface TableContentProps {
   loading: boolean;
@@ -222,7 +224,7 @@ export const TableContent: React.FC<TableContentProps> = ({
   handleConnect,
 }) => {
   const router = useRouter();
-
+  const UserId = useAuth();
   const getRankColor = (rank: number | undefined) => {
     if (rank === 1) return 'bg-[#DAA425] text-white';
     if (rank === 2) return 'bg-[#C0C0C0] text-white';
@@ -249,6 +251,7 @@ export const TableContent: React.FC<TableContentProps> = ({
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+     const { theme } = useTheme();
 
   const renderActions = (entry: LeaderboardEntry) => (
     <DropdownMenu>
@@ -277,7 +280,7 @@ export const TableContent: React.FC<TableContentProps> = ({
         <DropdownMenuItem
           onClick={(e) => {
             e.stopPropagation();
-            handleConnect(entry.student_id);
+            handleConnect(entry?.student_id);
           }}
         >
           Connect
@@ -380,11 +383,27 @@ export const TableContent: React.FC<TableContentProps> = ({
                   : entry?.total_points >= 900
                   ? 'Bronze'
                   : 'Palladium';
+                  const isCurrentUser = entry?.student_id === UserId;
 
               return (
                 <TableRow
                   key={entry?.student_id}
-                  className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800`}
+                  // className={`cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800`}
+                   className={`cursor-pointer ${
+                          theme === 'custom'
+                            ? 'hover:bg-blue-50'
+                            : theme === 'light'
+                            ? 'hover:bg-gray-100'
+                            : 'hover:bg-gray-800'
+                        } ${
+                          isCurrentUser
+                            ? theme === 'custom'
+                              ? 'bg-blue-200'
+                              : theme === 'light'
+                              ? 'bg-blue-100'
+                              : 'bg-blue-900'
+                            : ''
+                        }`}
                   onClick={() => router.push(`/users/${entry?.student_id}`)}
                 >
                   <TableCell>

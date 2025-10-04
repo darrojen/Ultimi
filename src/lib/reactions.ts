@@ -1,20 +1,4 @@
-export interface Reaction {
-  emoji: string;
-  name: string;
-  category: 'positive' | 'negative' | 'neutral' | 'fun' | 'love' | 'surprise' | 'thinking';
-  animation?: {
-    type: 'lottie' | 'gif' | 'css' | 'sprite';
-    source: string;
-    duration?: number;
-    loop?: boolean;
-    autoplay?: boolean;
-  };
-  style?: {
-    width?: string;
-    height?: string;
-    scale?: number;
-  };
-}
+import { Reaction } from "@/lib/types";
 
 export const reactions: Reaction[] = [
   // Positive reactions

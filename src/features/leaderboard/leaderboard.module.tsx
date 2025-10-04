@@ -33,6 +33,10 @@ function LeaderboardContent() {
 
   return (
     <div className="p-6 min-h-screen">
+      <head>
+        <title>Leaderboard | Ultimi</title>
+        <meta name="description" content="Learn more about us." />
+      </head>
       <Card className="mb-6 rounded-lg">
         <CardHeader className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <CardTitle className="text-lg font-semibold">Leaderboard</CardTitle>

@@ -33,6 +33,10 @@ import '../../globals.css';
 export default function QuizLayout({ children }: { children: React.ReactNode }) {
   return (
     <QuizProvider>
+      <head>
+        <title>Quiz | Ultimi</title>
+        <meta name="description" content="Learn more about us." />
+      </head>
       <MotionConfig reducedMotion="user">{children}</MotionConfig>
     </QuizProvider>
   );

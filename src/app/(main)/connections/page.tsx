@@ -177,6 +177,10 @@ export default function Connections() {
 
   return (
     <div className="p-4 min-h-screen dark:bg-[#16161a] ">
+      <head>
+        <title>Connections | Ultimi</title>
+        <meta name="description" content="Learn more about us." />
+      </head>
       <Card className="max-w-2xl mx-auto rounded-xl shadow-lg">
         <CardHeader>
           <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">

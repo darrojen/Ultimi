@@ -195,27 +195,189 @@ export default function UserProfilePage() {
     ],
   };
 
+  // return (
+  //   <div
+  //     className={`min-h-screen max-h-[fit-content] p-4 sm:p-6 lg:p-8 ${
+  //       theme === 'dark'
+  //         ? 'bg-gray-900 text-gray-100'
+  //         : 'bg-gray-50 text-gray-900'
+  //     }`}
+  //   >
+  //     {/* Back Button */}
+  //     <button
+  //       onClick={() =>
+  //         router.push(
+  //           profile?.user_type === 'student'
+  //             ? '/leaderboard'
+  //             : '/sponsors'
+  //         )
+  //       }
+  //       className="relative flex-1 top-[7px] left-4 w-10 h-10 flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-300 dark:hover:bg-gray-700 z-50"
+  //     >
+  //       <ArrowLeft className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+  //     </button>
+
+  //     {loading ? (
+  //       <div className="flex justify-center items-center h-64">
+  //         <Skeleton className="w-16 h-16 rounded-full" />
+  //       </div>
+  //     ) : (
+  //       <>
+  //         {/* Profile Card */}
+  //         <Card className="mb-6 p-4 sm:p-6 flex flex-col md:flex-row justify-between gap-4">
+  //           <div className="flex items-center gap-4">
+  //             <Avatar className="w-20 h-20 sm:w-24 sm:h-24">
+  //               {profile?.avatar_url ? (
+  //                 <AvatarImage src={profile.avatar_url} />
+  //               ) : (
+  //                 <AvatarFallback>{profile?.username[0]}</AvatarFallback>
+  //               )}
+  //             </Avatar>
+  //             <div>
+  //               <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+  //                 {profile?.username}
+  //               </h2>
+  //               <p className="text-sm sm:text-base opacity-70">
+  //                 {profile?.first_name} {profile?.last_name}
+  //                 {profile?.company && ` • ${profile.company}`}
+  //               </p>
+  //             </div>
+  //           </div>
+
+  //           {/* Student-only stats */}
+  //           {profile?.user_type === 'student' && (
+  //             <div className="flex flex-wrap gap-4 justify-center md:justify-end">
+  //               <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 min-w-[120px]">
+  //                 <Trophy className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-yellow-400" />
+  //                 <div>
+  //                   <p className="text-xs sm:text-sm">Points</p>
+  //                   <p className="font-bold text-lg sm:text-xl">
+  //                     {totalPoints}<span className="text-[13px]">{'𝙐𝙥'}</span>
+  //                   </p>
+  //                 </div>
+  //               </div>
+  //               <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 min-w-[140px]">
+  //                 <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24">
+  //                   <LeagueBadge3D league={overallLeague} />
+  //                 </div>
+  //                 <div>
+  //                   <p className="text-xs sm:text-sm">League</p>
+  //                   <p className="font-bold text-lg sm:text-xl">
+  //                     {overallLeague}
+  //                   </p>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           )}
+  //         </Card>
+
+  //         {/* Contact & Info */}
+  //         <Card className="mb-6 p-6">
+  //           <CardHeader>
+  //             <CardTitle className="text-xl font-bold">Contact Info</CardTitle>
+  //           </CardHeader>
+  //           <CardContent className="space-y-3 text-sm sm:text-base">
+  //             <div className="flex items-center gap-2">
+  //               <Mail className="w-4 h-4 opacity-70" />
+  //               <span>{profile?.email || 'No email provided'}</span>
+  //             </div>
+  //             <div className="flex items-center gap-2">
+  //               <Phone className="w-4 h-4 opacity-70" />
+  //               <span>{profile?.phone || 'No phone provided'}</span>
+  //             </div>
+  //             <div className="flex items-center gap-2">
+  //               <MapPin className="w-4 h-4 opacity-70" />
+  //               <span>{profile?.city || 'No state provided'}</span>
+  //             </div>
+  //             <div className="flex items-center gap-2">
+  //               <FileText className="w-4 h-4 opacity-70" />
+  //               <span>{profile?.reason || 'No reason provided'}</span>
+  //             </div>
+  //           </CardContent>
+  //         </Card>
+
+  //         {/* Sponsor-only Bio Section */}
+  //         {profile?.user_type === 'sponsor' && (
+  //           <Card className="mb-6 p-6">
+  //             <CardHeader>
+  //               <CardTitle className="flex items-center gap-2 text-xl">
+  //                 <Info className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+  //                 About
+  //               </CardTitle>
+  //             </CardHeader>
+  //             <CardContent>
+  //               <p className="text-sm sm:text-base leading-relaxed">
+  //                 {profile?.bio || 'This sponsor has not added a bio yet.'}
+  //               </p>
+  //               {profile?.company && (
+  //                 <div className="flex items-center gap-2 mt-3 text-blue-600 dark:text-blue-400">
+  //                   <Building2 className="w-4 h-4" />
+  //                   <span className="font-medium">{profile.company}</span>
+  //                 </div>
+  //               )}
+  //             </CardContent>
+  //           </Card>
+  //         )}
+
+  //         {/* Student-only charts */}
+  //         {profile?.user_type === 'student' && (
+  //           <Card className="p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
+  //             <CardHeader>
+  //               <CardTitle className="text-xl sm:text-2xl font-bold mb-4">
+  //                 Progress Over Time
+  //               </CardTitle>
+  //             </CardHeader>
+  //             <CardContent>
+  //               {loading ? (
+  //                 <div className="w-full h-[400px] flex items-center justify-center">
+  //                   <Skeleton className="w-full h-[400px] rounded-xl animate-pulse" />
+  //                 </div>
+  //               ) : (
+  //                 <div className="w-full h-[400px]">
+  //                   <Line
+  //                     data={chartData}
+  //                     options={{
+  //                       responsive: true,
+  //                       maintainAspectRatio: false,
+  //                     }}
+  //                   />
+  //                 </div>
+  //               )}
+  //             </CardContent>
+  //           </Card>
+  //         )}
+  //       </>
+  //     )}
+  //   </div>
+  // );
+
+
+
   return (
     <div
-      className={`min-h-screen max-h-[fit-content] p-4 sm:p-6 lg:p-8 ${
+      className={`min-h-screen max-h-[fit-content] p-4 sm:p-6 lg:p-8 xl:p-10 ${
         theme === 'dark'
           ? 'bg-gray-900 text-gray-100'
           : 'bg-gray-50 text-gray-900'
       }`}
     >
+       <head>
+        <title>User | Ultimi</title>
+      </head>
       {/* Back Button */}
-      <button
-        onClick={() =>
-          router.push(
-            profile?.user_type === 'student'
-              ? '/leaderboard'
-              : '/sponsors'
-          )
-        }
-        className="relative flex-1 top-[7px] left-4 w-10 h-10 flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-300 dark:hover:bg-gray-700 z-50"
-      >
-        <ArrowLeft className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-      </button>
+      <div className="relative mb-6">
+        <button
+          onClick={() =>
+            router.push(
+              profile?.user_type === 'student' ? '/leaderboard' : '/sponsors'
+            )
+          }
+          className="absolute top-0 left-0 w-10 h-10 flex items-center justify-center bg-gray-200 dark:bg-gray-800 rounded-full shadow-md hover:bg-gray-300 dark:hover:bg-gray-700 z-50 transition-colors"
+          aria-label="Back"
+        >
+          <ArrowLeft className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        </button>
+      </div>
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
@@ -224,20 +386,20 @@ export default function UserProfilePage() {
       ) : (
         <>
           {/* Profile Card */}
-          <Card className="mb-6 p-4 sm:p-6 flex flex-col md:flex-row justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <Avatar className="w-20 h-20 sm:w-24 sm:h-24">
+          <Card className="mb-6 p-4 sm:p-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-6">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <Avatar className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28">
                 {profile?.avatar_url ? (
                   <AvatarImage src={profile.avatar_url} />
                 ) : (
                   <AvatarFallback>{profile?.username[0]}</AvatarFallback>
                 )}
               </Avatar>
-              <div>
+              <div className="text-center sm:text-left">
                 <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold">
                   {profile?.username}
                 </h2>
-                <p className="text-sm sm:text-base opacity-70">
+                <p className="text-sm sm:text-base lg:text-lg opacity-70 mt-1">
                   {profile?.first_name} {profile?.last_name}
                   {profile?.company && ` • ${profile.company}`}
                 </p>
@@ -246,22 +408,22 @@ export default function UserProfilePage() {
 
             {/* Student-only stats */}
             {profile?.user_type === 'student' && (
-              <div className="flex flex-wrap gap-4 justify-center md:justify-end">
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 min-w-[120px]">
-                  <Trophy className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-yellow-400" />
+              <div className="flex flex-wrap items-center justify-center md:justify-end gap-4 mt-4 md:mt-0">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 min-w-[120px] shadow-sm">
+                  <Trophy className="w-6 h-6 sm:w-7 sm:h-7 text-yellow-400" />
                   <div>
-                    <p className="text-xs sm:text-sm">Points</p>
+                    <p className="text-xs sm:text-sm opacity-80">Points</p>
                     <p className="font-bold text-lg sm:text-xl">
-                      {totalPoints}<span className="text-[13px]">{'𝙐𝙥'}</span>
+                      {totalPoints}<span className="text-[13px] opacity-60">{'𝙐𝙥'}</span>
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 min-w-[140px]">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-gray-800 min-w-[140px] shadow-sm">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20">
                     <LeagueBadge3D league={overallLeague} />
                   </div>
                   <div>
-                    <p className="text-xs sm:text-sm">League</p>
+                    <p className="text-xs sm:text-sm opacity-80">League</p>
                     <p className="font-bold text-lg sm:text-xl">
                       {overallLeague}
                     </p>
@@ -272,25 +434,25 @@ export default function UserProfilePage() {
           </Card>
 
           {/* Contact & Info */}
-          <Card className="mb-6 p-6">
-            <CardHeader>
-              <CardTitle className="text-xl font-bold">Contact Info</CardTitle>
+          <Card className="mb-6 p-4 sm:p-6">
+            <CardHeader className="p-0 mb-4">
+              <CardTitle className="text-lg sm:text-xl font-bold">Contact Info</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm sm:text-base">
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 opacity-70" />
+            <CardContent className="space-y-3 text-sm sm:text-base p-0">
+              <div className="flex items-start sm:items-center gap-2">
+                <Mail className="w-4 h-4 mt-1 sm:mt-0 opacity-70" />
                 <span>{profile?.email || 'No email provided'}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 opacity-70" />
+              <div className="flex items-start sm:items-center gap-2">
+                <Phone className="w-4 h-4 mt-1 sm:mt-0 opacity-70" />
                 <span>{profile?.phone || 'No phone provided'}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 opacity-70" />
+              <div className="flex items-start sm:items-center gap-2">
+                <MapPin className="w-4 h-4 mt-1 sm:mt-0 opacity-70" />
                 <span>{profile?.city || 'No state provided'}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 opacity-70" />
+              <div className="flex items-start sm:items-center gap-2">
+                <FileText className="w-4 h-4 mt-1 sm:mt-0 opacity-70" />
                 <span>{profile?.reason || 'No reason provided'}</span>
               </div>
             </CardContent>
@@ -298,21 +460,21 @@ export default function UserProfilePage() {
 
           {/* Sponsor-only Bio Section */}
           {profile?.user_type === 'sponsor' && (
-            <Card className="mb-6 p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-xl">
+            <Card className="mb-6 p-4 sm:p-6">
+              <CardHeader className="p-0 mb-4">
+                <CardTitle className="flex items-center gap-2 text-lg sm:text-xl font-bold">
                   <Info className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   About
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 <p className="text-sm sm:text-base leading-relaxed">
                   {profile?.bio || 'This sponsor has not added a bio yet.'}
                 </p>
                 {profile?.company && (
                   <div className="flex items-center gap-2 mt-3 text-blue-600 dark:text-blue-400">
                     <Building2 className="w-4 h-4" />
-                    <span className="font-medium">{profile.company}</span>
+                    <span className="font-medium text-sm sm:text-base">{profile.company}</span>
                   </div>
                 )}
               </CardContent>
@@ -321,24 +483,25 @@ export default function UserProfilePage() {
 
           {/* Student-only charts */}
           {profile?.user_type === 'student' && (
-            <Card className="p-4 rounded-lg bg-gray-100 dark:bg-gray-800">
-              <CardHeader>
-                <CardTitle className="text-xl sm:text-2xl font-bold mb-4">
+            <Card className="p-4 sm:p-6 rounded-lg bg-gray-100 dark:bg-gray-800">
+              <CardHeader className="p-0">
+                <CardTitle className="text-lg sm:text-2xl font-bold mb-4">
                   Progress Over Time
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-0">
                 {loading ? (
-                  <div className="w-full h-[400px] flex items-center justify-center">
-                    <Skeleton className="w-full h-[400px] rounded-xl animate-pulse" />
+                  <div className="w-full h-[300px] sm:h-[400px] flex items-center justify-center">
+                    <Skeleton className="w-full h-[300px] sm:h-[400px] rounded-xl animate-pulse" />
                   </div>
                 ) : (
-                  <div className="w-full h-[400px]">
+                  <div className="w-full h-[300px] sm:h-[400px]">
                     <Line
                       data={chartData}
                       options={{
                         responsive: true,
                         maintainAspectRatio: false,
+                        // Add more options for chart responsiveness
                       }}
                     />
                   </div>
@@ -350,4 +513,8 @@ export default function UserProfilePage() {
       )}
     </div>
   );
+
+
+
+
 }

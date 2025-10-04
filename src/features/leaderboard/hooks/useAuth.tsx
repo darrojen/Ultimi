@@ -14,5 +14,5 @@ export const useAuth = () => {
     fetchCurrentUser();
   }, []);
 
-  return { currentUserId };
+  return  currentUserId ;
 };

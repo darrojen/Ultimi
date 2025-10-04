@@ -168,6 +168,9 @@ export default function SponsorsPage() {
 
   return (
     <div className={`min-h-screen p-4 sm:p-6 lg:p-8 ${theme === 'dark' ? 'bg-[#16161a] text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
+      <head>
+        <title>Sponsors | Ultimi</title>
+      </head>
       <Card className="mb-6 rounded-lg">
         <CardHeader className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <CardTitle className="text-lg sm:text-xl font-semibold">Our Sponsors</CardTitle>

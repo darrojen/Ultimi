@@ -8,6 +8,9 @@ import { useState, useEffect } from 'react';
 import { WifiOff } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
+import Box from '@/components/ui/box';
+import { Jura } from "next/font/google"
+import clsx from 'clsx';
 
 // Create a QueryClient instance
 const queryClient = new QueryClient({
@@ -20,6 +23,13 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+
+const jura = Jura({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+})
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isOnline, setIsOnline] = useState(true);
@@ -40,8 +50,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }, []);
 
   return (
-    <html lang="en">
-      <body suppressHydrationWarning className="relative">
+    <Box as="html" lang="en">
+      <Box as="body" suppressHydrationWarning className="relative">
         <QueryClientProvider client={queryClient}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             
@@ -55,31 +65,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   transition={{ type: 'spring', stiffness: 260, damping: 25 }}
                   className="absolute top-4 left-[55%] -translate-x-1/2 z-50 w-[90%] md:w-[500px]"
                 >
-                  <div className="flex items-center justify-center gap-3  bg-white dark:bg-gray-900 border border-red-500 text-red-600 px-4 py-3 rounded-xl shadow-xl">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-800">
+                  <Box as="div" className="flex items-center justify-center gap-3  bg-white dark:bg-gray-900 border border-red-500 text-red-600 px-4 py-3 rounded-xl shadow-xl">
+                    <Box as="div" className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-800">
                       <WifiOff className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold">No Internet Connection</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                    </Box>
+                    <Box as="div" className="flex-1">
+                      <Box as="p" className="text-sm font-semibold">No Internet Connection</Box>
+                      <Box as="p" className="text-xs text-gray-600 dark:text-gray-400">
                         Please check your connection and try again.
-                      </p>
-                    </div>
-                  </div>
+                      </Box>
+                    </Box>
+                  </Box>
                 </motion.div>
               )}
             </AnimatePresence>
 
             {/* Page Content */}
-            <div className={`${!isOnline ? 'pt-0' : ''} transition-all`}>
+            {/* <Box as="div" className={`${!isOnline ? 'pt-0' : ''} transition-all`}> */}
+                  <Box as="body" className={clsx(jura.className, !isOnline ? "pt-0" : "", "transition-all" , "text-[1.05rem]") }>
+
               <ModeToggle />
               {children}
-            </div>
+            </Box>
 
             <Toaster />
           </ThemeProvider>
         </QueryClientProvider>
-      </body>
-    </html>
+      </Box>
+    </Box>
   );
 }

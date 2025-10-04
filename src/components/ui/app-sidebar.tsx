@@ -42,6 +42,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/lib/supabaseClient';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
+import  {MobileNavigation}  from '@/components/widgets/mobile-nav';
+// import { MobileNavigation } from '@/components/widgets/MobileNavigation';
 
 export default function AppSidebar() {
 
@@ -232,7 +234,10 @@ export default function AppSidebar() {
   }
 
   return (
-    <Sidebar className="flex flex-col justify-between h-screen bg-background">
+
+    <>
+    
+    <Sidebar className=" flex-col justify-between h-screen bg-background hidden sm:flex">
       <SidebarHeader className="p-3 flex items-center justify-center">
         <span className="text-lg font-bold truncate">Ultimi</span>
       </SidebarHeader>
@@ -360,5 +365,7 @@ export default function AppSidebar() {
         </DropdownMenu>
       </SidebarFooter>
     </Sidebar>
+      <MobileNavigation />
+    </>
   );
 }

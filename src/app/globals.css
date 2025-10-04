@@ -43,7 +43,12 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-
+.bg-focus {
+  background-image: url("/FOCUS.jpeg"); /* ✅ starts with / */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 /* ---------- Root Variables ---------- */
 :root {
   --radius: 0.625rem;
@@ -149,7 +154,8 @@
 }
 /* ---------- Fonts & Body ---------- */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Jura','Inter', sans-serif;
+
   @apply bg-background text-foreground;
 }
 
@@ -179,6 +185,45 @@ body {
   }
   
 }
+
+:root {
+  --nav-bg: #4a5568; /* Tailwind's gray-600 */
+}
+
+/* For dark mode */
+.dark {
+  --nav-bg: #1f2937; /* Tailwind's gray-800 */
+}
+
+/* Define keyframes for the blob movement based on route */
+@keyframes morph-dashboard {
+  from { d: "M0,32 C30,32 50,0 80,0 C110,0 130,32 160,32 H0Z"; }
+  to { d: "M0,32 C20,32 40,0 60,0 C80,0 100,32 120,32 H0Z"; }
+}
+
+@keyframes morph-quiz {
+  from { d: "M0,32 C20,32 40,0 60,0 C80,0 100,32 120,32 H0Z"; }
+  to { d: "M0,32 C50,32 70,0 90,0 C110,0 130,32 160,32 H0Z"; }
+}
+
+/* You would need to add keyframes for each transition pair, e.g.,
+@keyframes morph-dashboard-to-quiz { ... }
+This is complex, so the Framer Motion approach using `variants` is much better.
+The Framer Motion `variants` and `transition` take care of the interpolation,
+making the CSS keyframes unnecessary for the path animation itself.
+*/
+
+/* Optional: Add a subtle glow for better visual effect */
+.unique-nav-container {
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  background-color: transparent; /* or a translucent color */
+}
+
+.dark .unique-nav-container {
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+}
+
+
 
 
 /* Base scrollbar styles */

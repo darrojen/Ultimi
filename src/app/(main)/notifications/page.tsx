@@ -317,7 +317,11 @@ export default function Notifications() {
   ).length;
 
   return (
-    <div className="p-4 min-h-screen bg-gray-50 dark:bg-[#18181b]">
+    <div className="p-4 min-h-screen bg-gray-50 dark:bg-[#18181b]  pb-[66px] sm:pb-[0px]">
+      <head>
+        <title>Notifications | Ultimi</title>
+        <meta name="description" content="Learn more about us." />
+      </head>
       <div className="max-w-2xl mx-auto">
         <div className="flex flex-wrap items-center gap-4 mb-6">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">

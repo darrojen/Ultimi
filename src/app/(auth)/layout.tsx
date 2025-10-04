@@ -1,3 +1,4 @@
+import Box from "@/components/ui/box"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -11,14 +12,14 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen flex">
+    <Box as="div" className="min-h-screen flex">
       {/* Left side (form) */}
-      <div className="flex-1 flex items-center justify-center bg-background">
+      <Box as="div" className="flex-1 flex items-center justify-center bg-background">
         {children}
-      </div>
+      </Box>
 
       {/* Right side (image or text) */}
     
-    </div>
+    </Box>
   )
 }

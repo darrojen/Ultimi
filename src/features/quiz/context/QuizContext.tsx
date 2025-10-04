@@ -183,3 +183,4 @@ export const QuizProvider = ({ children }: { children: ReactNode }) => {
 
   return <QuizContext.Provider value={contextValue}>{children}</QuizContext.Provider>;
 };
+
