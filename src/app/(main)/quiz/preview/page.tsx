@@ -144,7 +144,7 @@ export default function Preview() {
           key={`${currentSubject}-${currentIndex}`}
           className="relative"
         >
-          {currentQuestion.userAnswer === -1 && (
+          {currentQuestion?.userAnswer === -1 && (
             <div className="flex items-center justify-center gap-2 mb-4 p-3 rounded-xl border border-red-300 bg-red-50 text-red-700 font-medium shadow-sm dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
               <CircleAlert className="w-5 h-5 flex-shrink-0" />
               <span className="text-sm sm:text-base">Not Answered</span>
@@ -153,7 +153,7 @@ export default function Preview() {
 
           <PreviewQuestion
             question={currentQuestion}
-            userAnswer={currentQuestion.userAnswer}
+            userAnswer={currentQuestion?.userAnswer}
           />
         </motion.div>
 

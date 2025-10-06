@@ -9,7 +9,7 @@ import { WifiOff } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import Box from '@/components/ui/box';
-import { Jura } from "next/font/google"
+import { Jura, Nunito_Sans } from "next/font/google"
 import clsx from 'clsx';
 
 // Create a QueryClient instance
@@ -25,7 +25,7 @@ const queryClient = new QueryClient({
 });
 
 
-const jura = Jura({
+const jura = Nunito_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",

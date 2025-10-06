@@ -569,16 +569,6 @@ export function MessageList({
             className="fixed bottom-24 right-4 z-40"
           >
             <Box className="relative">
-              <motion.span
-                animate={{ scale: [1, 1.8], opacity: [0.6, 0] }}
-                transition={{ repeat: Infinity, duration: 1.6, ease: "easeOut" }}
-                className="absolute inset-0 rounded-full bg-blue-400/30"
-              />
-              <motion.span
-                animate={{ scale: [1, 2.2], opacity: [0.35, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut", delay: 0.4 }}
-                className="absolute inset-0 rounded-full bg-blue-400/30"
-              />
               <Button variant="outline" size="icon" className="rounded-full shadow-lg relative z-10" onClick={scrollToBottom}>
                 <ChevronDown className="h-5 w-5" />
               </Button>
