@@ -243,7 +243,7 @@ export default function AppSidebar() {
 
     <>
     
-    <Sidebar collapsible="icon" className=" flex-col justify-between h-screen bg-background hidden">
+    <Sidebar collapsible="icon" className=" flex-col justify-between h-screen bg-background hidden p-3">
     
          <SidebarHeader className=" border-b border-border">
           <div className="flex gap-2">
@@ -275,7 +275,7 @@ export default function AppSidebar() {
                 <SidebarMenuButton asChild>
                   <Link
                     href={item.url}
-                    className={`flex pt-[25px] pb-[20px] pr-[50px] items-center gap-2  rounded-lg transition
+                    className={`flex pt-[25px] pr-[50px] items-center gap-2  rounded-lg transition
                       ${
                         isActive
                           ? 'bg-gray-100 dark:bg-gray-800 font-semibold border-l-4 border-primary'
