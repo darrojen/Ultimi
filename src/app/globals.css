@@ -891,3 +891,40 @@ html.light ::-webkit-scrollbar-thumb:hover {
 .banter-loader__box:nth-child(9) {
   animation: moveBox-9 4s infinite;
 }
+
+/* Hide scrollbar for all browsers */
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+/* Hide scrollbar in chat container but keep scroll functionality */
+.chat-container {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+}
+.chat-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+/* Default state */
+.speaker-icon,
+.dropdown-icon {
+  color: #333;
+  transition: color 0.2s ease-in-out;
+}
+
+/* Custom theme active = blue */
+[data-theme="custom"] .speaker-icon.active,
+[data-theme="custom"] .dropdown-icon.active {
+  color: #3b82f6;
+}
+
+/* Light & dark themes active = black */
+[data-theme="light"] .speaker-icon.active,
+[data-theme="dark"] .speaker-icon.active,
+[data-theme="light"] .dropdown-icon.active,
+[data-theme="dark"] .dropdown-icon.active {
+  color: #000;
+}

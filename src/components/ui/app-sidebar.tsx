@@ -5,6 +5,7 @@ import {
   Award,
   Bell,
   BookOpenCheck,
+  Bot,
   ChartNoAxesCombined,
   Cpu,
   HandHelping,
@@ -188,15 +189,10 @@ export default function AppSidebar() {
   const navItems = [
     { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
     { title: 'Quiz', url: '/quiz', icon: BookOpenCheck },
+    { title: 'Ultimi Ai', url: '/Chatbot', icon: Bot },
     { title: "Students' Leaderboard", url: '/leaderboard', icon: Award },
     { title: 'Progress', url: '/progress', icon: ChartNoAxesCombined },
     { title: 'Sponsors', url: '/sponsors', icon: HandHelping },
-    {
-      title: 'Ultimi AI',
-      url: '/ultimi-ai',
-      // icon: () => <Image src="/public/icon@.jpg" alt="ai" width={30} height={30} />,
-      icon: Cpu
-    },
     { title: 'Notifications', url: '/notifications', icon: Bell },
     { title: 'Messages', url: '/messages', icon: MessageCircle },
     { title: 'Connections', url: '/connections', icon: Users },
