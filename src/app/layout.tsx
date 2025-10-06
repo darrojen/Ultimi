@@ -73,8 +73,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               )}
             </AnimatePresence>
 
-            {/* Page Content */}
-            {/* <Box as="div" className={`${!isOnline ? 'pt-0' : ''} transition-all`}> */}
                   <Box as="body" className={clsx( !isOnline ? "pt-0" : "", "transition-all" , "text-[1.05rem]") }>
 
               <ModeToggle />
