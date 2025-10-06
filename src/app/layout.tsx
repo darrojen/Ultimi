@@ -9,7 +9,6 @@ import { WifiOff } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import Box from '@/components/ui/box';
-import { Jura, Nunito_Sans } from "next/font/google"
 import clsx from 'clsx';
 
 // Create a QueryClient instance
@@ -24,12 +23,6 @@ const queryClient = new QueryClient({
   },
 });
 
-
-const jura = Nunito_Sans({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-})
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [isOnline, setIsOnline] = useState(true);
@@ -82,7 +75,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             {/* Page Content */}
             {/* <Box as="div" className={`${!isOnline ? 'pt-0' : ''} transition-all`}> */}
-                  <Box as="body" className={clsx(jura.className, !isOnline ? "pt-0" : "", "transition-all" , "text-[1.05rem]") }>
+                  <Box as="body" className={clsx( !isOnline ? "pt-0" : "", "transition-all" , "text-[1.05rem]") }>
 
               <ModeToggle />
               {children}

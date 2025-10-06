@@ -5,6 +5,7 @@ import {
   Award,
   Bell,
   BookOpenCheck,
+  Bot,
   ChartNoAxesCombined,
   Cpu,
   HandHelping,
@@ -200,7 +201,7 @@ export default function AppSidebar() {
       title: 'Ultimi AI',
       url: '/ultimi-ai',
       // icon: () => <Image src="/public/icon@.jpg" alt="ai" width={30} height={30} />,
-      icon: Cpu
+      icon: Bot
     },
     { title: 'Notifications', url: '/notifications', icon: Bell },
     { title: 'Messages', url: '/messages', icon: MessageCircle },
