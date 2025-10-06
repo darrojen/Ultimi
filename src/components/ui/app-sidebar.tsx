@@ -5,9 +5,8 @@ import {
   Award,
   Bell,
   BookOpenCheck,
-  Bot,
   ChartNoAxesCombined,
-  Cpu,
+  Bot,
   HandHelping,
   LayoutDashboard,
   LogOut,
@@ -16,6 +15,7 @@ import {
   MoreHorizontal,
   User,
   Users,
+  SwatchBook,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -33,8 +33,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 import type { AuthUser } from '@supabase/supabase-js'
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +47,7 @@ import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
 import  {MobileNavigation}  from '@/components/widgets/mobile-nav';
 // import { MobileNavigation } from '@/components/widgets/MobileNavigation';
+
 
 export default function AppSidebar() {
 
@@ -189,10 +192,16 @@ export default function AppSidebar() {
   const navItems = [
     { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
     { title: 'Quiz', url: '/quiz', icon: BookOpenCheck },
-    { title: 'Ultimi Ai', url: '/Chatbot', icon: Bot },
-    { title: "Students' Leaderboard", url: '/leaderboard', icon: Award },
+    { title: 'Flashcards', url: '/flashCard', icon: SwatchBook },
+    { title: "Leaderboard", url: '/leaderboard', icon: Award },
     { title: 'Progress', url: '/progress', icon: ChartNoAxesCombined },
     { title: 'Sponsors', url: '/sponsors', icon: HandHelping },
+    {
+      title: 'Ultimi AI',
+      url: '/ultimi-ai',
+      // icon: () => <Image src="/public/icon@.jpg" alt="ai" width={30} height={30} />,
+      icon: Bot
+    },
     { title: 'Notifications', url: '/notifications', icon: Bell },
     { title: 'Messages', url: '/messages', icon: MessageCircle },
     { title: 'Connections', url: '/connections', icon: Users },
@@ -233,12 +242,30 @@ export default function AppSidebar() {
 
     <>
     
-    <Sidebar className=" flex-col justify-between h-screen bg-background hidden sm:flex">
-      <SidebarHeader className="p-3 flex items-center justify-center">
-        <span className="text-lg font-bold truncate">Ultimi</span>
-      </SidebarHeader>
+    <Sidebar collapsible="icon" className=" flex-col justify-between h-screen bg-background hidden">
+    
+         <SidebarHeader className=" border-b border-border">
+          <div className="flex gap-2">
+          </div>
+          <div className="flex relative  items-center justify-start  pt-3">
+          <img
+            src="/logo.png"
+            alt="Ultimi Logo"
+            className="h-8 w-10 min-h-[2.4rem]  relative left-[0px] min-w-[2.5rem] flex-shrink-0 object-contain"
+          />
+         <span
+            className={`
+              text-xl font-bold truncate transition-all duration-300
+              data-[collapsed=true]:hidden
+            `}
+          >
+            Ultimi
+          </span>
+        </div>
+        </SidebarHeader>
 
-      <SidebarContent className="flex-1">
+
+      <SidebarContent className="flex-1 pt-[30px]">
         <SidebarMenu>
           {filteredNavItems.map(item => {
             const isActive = pathname === item.url;
@@ -247,7 +274,7 @@ export default function AppSidebar() {
                 <SidebarMenuButton asChild>
                   <Link
                     href={item.url}
-                    className={`flex pt-[20px] pb-[20px] items-center gap-2 p-2 rounded-lg transition
+                    className={`flex pt-[25px] pb-[20px] pr-[50px] items-center gap-2  rounded-lg transition
                       ${
                         isActive
                           ? 'bg-gray-100 dark:bg-gray-800 font-semibold border-l-4 border-primary'
@@ -260,7 +287,7 @@ export default function AppSidebar() {
                     }
                   >
                     <div className="relative">
-                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      <item.icon className="h-6 w-6 flex-shrink-0" />
                       {item.title === 'Notifications' &&
                         notificationCount > 0 && (
                           <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 text-xs">
