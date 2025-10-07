@@ -219,19 +219,6 @@ export default function ChatbotPage() {
         Ultimi Ai
       </h1>
 
-      {/* AI Sphere */}
-      <div className="relative flex flex-col items-center mb-12">
-        <div className="relative">
-          {/* Outer Glow */}
-          <div className="absolute w-32 h-32 rounded-full bg-blue-400 opacity-20 animate-pulse-glow top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-
-          {/* Ripple Circles */}
-          <div className="absolute w-12 h-12 bg-blue-400 rounded-full animate-ripple-delay0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute w-12 h-12 bg-blue-400 rounded-full animate-ripple-delay200 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute w-12 h-12 bg-blue-400 rounded-full animate-ripple-delay400 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-        </div>
-      </div>
-
       {/* Chat Area */}
       <div
         ref={chatContainerRef}
@@ -276,6 +263,7 @@ export default function ChatbotPage() {
 
               {msg.sender === "bot" && msg.typing && <span className="animate-blink">|</span>}
 
+              {/* User hover icons (outside bubble) */}
               {msg.sender === "user" && (
                 <div className="absolute -bottom-6 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-full px-2 py-1 shadow-md">
                   <button title="Copy" className="text-sm hover:scale-110">📋</button>
@@ -283,6 +271,7 @@ export default function ChatbotPage() {
                 </div>
               )}
 
+              {/* Bot icons (outside bubble) */}
               {msg.sender === "bot" && (
                 <div className="absolute -bottom-6 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-full px-2 py-1 shadow-md">
                   <button title="Copy" className="text-sm hover:scale-110">📋</button>
@@ -430,35 +419,43 @@ export default function ChatbotPage() {
           animation: blink 1s step-start infinite;
         }
         @keyframes blink {
-          50% { opacity: 0; }
+          50% {
+            opacity: 0;
+          }
         }
         .animate-fade-in {
           animation: fadeIn 0.3s ease-in;
         }
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(5px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(5px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
         .animate-ping-ripple {
           animation: ping-ripple 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
         @keyframes ping-ripple {
-          0% { transform: scale(0.8); opacity: 0.6; }
-          50% { transform: scale(1.4); opacity: 0.3; }
-          100% { transform: scale(0.8); opacity: 0.6; }
+          0% {
+            transform: scale(0.8);
+            opacity: 0.6;
+          }
+          50% {
+            transform: scale(1.4);
+            opacity: 0.3;
+          }
+          100% {
+            transform: scale(0.8);
+            opacity: 0.6;
+          }
         }
-        .delay-200 { animation-delay: 0.2s; }
-        .animate-pulse-glow {
-          animation: pulse-glow 2s infinite;
+        .delay-200 {
+          animation-delay: 0.2s;
         }
-        @keyframes pulse-glow {
-          0% { transform: scale(0.9); opacity: 0.2; }
-          50% { transform: scale(1.1); opacity: 0.3; }
-          100% { transform: scale(0.9); opacity: 0.2; }
-        }
-        .animate-ripple-delay0 { animation: ping-ripple 1.5s infinite; }
-        .animate-ripple-delay200 { animation: ping-ripple 1.5s 0.2s infinite; }
-        .animate-ripple-delay400 { animation: ping-ripple 1.5s 0.4s infinite; }
       `}</style>
     </div>
   );
