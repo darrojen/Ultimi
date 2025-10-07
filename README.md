@@ -168,19 +168,22 @@ Ultimi is built using **modern web technologies and libraries** to ensure scalab
 
 
 
-⚙️ Installation & Setup Instructions
-
+### ⚙️ Installation & Setup Instructions
 Follow these steps to run Ultimi locally:
 
-Clone the repository:
+## Clone the repository:
+```text
 
 git clone https://github.com/<your-team>/<repository-name>.git
 cd <repository-name>
+```
 
-
-Install dependencies:
+## Install dependencies:
+```text
 
 npm install
+```
+
 
 ```text
 
@@ -531,7 +534,7 @@ src/
 
 ```
 
-👥 Team Information:
+### 👥 Team Information:
 
 | Name                      | Role                 | GitHub                                       |
 | ------------------------- | -------------------- | -------------------------------------------- |
@@ -541,7 +544,6 @@ src/
 ## 🖼️ Screenshots / Pages  
 
 Here are a few preview screens showcasing **Ultimi’s interface and features.**  
-*(Images are for demonstration — replace with your actual file paths if different.)*  
 
 ---
 
