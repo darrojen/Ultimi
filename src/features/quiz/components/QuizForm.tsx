@@ -640,7 +640,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
   const fetchQuestions = async (subject: string, apiExamType?: string, count: number = 100): Promise<Question[]> => {
     const mappedSubject = subjectMapping[subject] || subject;
     const apiType = apiExamType ? `&type=${apiExamType}` : '';
-    const endpoint = count > 100 ? `/m?subject=${mappedSubject}${apiType}` : `/q/${count}?subject=${mappedSubject}${apiType}`;
+    const endpoint = count > 40 ? `/m?subject=${mappedSubject}${apiType}` : `/q/${count}?subject=${mappedSubject}${apiType}`;
     const url = `https://questions.aloc.com.ng/api/v2${endpoint}`;
     try {
       const response = await fetch(url, {

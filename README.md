@@ -548,15 +548,18 @@ Folder Structure:
 | **Darlington Aja-ezo S.** | Full Stack Developer | [@darrojen](https://github.com/darrojen)     |
 | **Gregory Okehie U.**     | Full Stack Developer | [@gregokehie](https://github.com/gregokehie) |
 
-
 ## 🖼️ Screenshots / Pages  
 
-Here are a few preview screens showcasing Ultimi’s interface and features.  
-*(Images are for demonstration; replace with your actual file paths if different.)*  
+Here are a few preview screens showcasing **Ultimi’s interface and features.**  
+*(Images are for demonstration — replace with your actual file paths if different.)*  
+
+---
+
+### 🎓 Core Pages
 
 | Dashboard | Register | Login |
 |------------|-----------|--------|
-| ![Dashboard](src/public/activity-calender.png) | ![Register](src/public/register.png) | ![Login](src/public/login.png) |
+| ![Dashboard](src/public/dashboard.png) | ![Register](src/public/register.png) | ![Login](src/public/login.png) |
 
 | Messages | Notifications | Opinions |
 |-----------|----------------|-----------|
@@ -569,7 +572,18 @@ Here are a few preview screens showcasing Ultimi’s interface and features.
 | Average Performance |
 |----------------------|
 | ![Average performance](src/public/student-performance.png) |
+---
+
+### 🧠 Learning & Quiz Pages
+
+| Exam Type | Department Selection | Quiz in Progress |
+|------------|----------------------|------------------|
+| ![Exam type](src/public/exam-type.png) | ![Department selection](src/public/quiz-form.png) | ![Quiz in progress](src/public/quiz-in-progress.png) |
+
+| Streak | Quiz Form | No Internet |
+|--------|------------|--------------|
+| ![Streak](src/public/streak.png) | ![Quiz form](src/public/subjects.png) | ![No internet](src/public/no-internet.png) |
 
 ---
 
-> 🧭 **Note:** These images represent a snapshot of the Ultimi platform — showcasing its **clean UI**, **interactive dashboards**, and **AI-powered learning experience**.
+> 🧭 **Note:** These screenshots represent a snapshot of the **Ultimi platform** — showcasing its **clean UI**, **interactive dashboards**, **AI-powered quizzes**, and **engaging learning experience.**
