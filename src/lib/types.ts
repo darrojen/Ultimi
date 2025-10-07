@@ -2,6 +2,7 @@ export interface Question {
   text: string;
   options: string[];
   correct: number;
+  image: string;
 }
 
 export type QuizFormat = 'WAEC' | 'JAMB' | 'normal';
