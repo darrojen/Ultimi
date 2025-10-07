@@ -280,264 +280,249 @@ Once installed, you can:
 
 
 Folder Structure:
-📦src
- ┣ 📂app
- ┃ ┣ 📂(auth)
- ┃ ┃ ┣ 📂login
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂register
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┗ 📜layout.tsx
- ┃ ┣ 📂(main)
- ┃ ┃ ┣ 📂connections
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂dashboard
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂flashCard
- ┃ ┃ ┃ ┣ 📂[subject]
- ┃ ┃ ┃ ┃ ┣ 📂[topic]
- ┃ ┃ ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂leaderboard
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂messages
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂notifications
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂opinions
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂progress
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂quiz
- ┃ ┃ ┃ ┣ 📂domain-selection___
- ┃ ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┃ ┣ 📂home
- ┃ ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┃ ┣ 📂preview
- ┃ ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┃ ┣ 📂result
- ┃ ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┃ ┣ 📜.DS_Store
- ┃ ┃ ┃ ┣ 📜layout.tsx
- ┃ ┃ ┃ ┣ 📜page.tsx
- ┃ ┃ ┃ ┗ 📜providers.tsx
- ┃ ┃ ┣ 📂settings
- ┃ ┃ ┃ ┗ 📂profile-setup
- ┃ ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂sponsors
- ┃ ┃ ┃ ┣ 📜page.tsx
- ┃ ┃ ┃ ┗ 📜types.ts
- ┃ ┃ ┣ 📂streaks
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂ultimi-ai
- ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┣ 📂users
- ┃ ┃ ┃ ┗ 📂[id]
- ┃ ┃ ┃ ┃ ┗ 📜page.tsx
- ┃ ┃ ┗ 📜layout.tsx
- ┃ ┣ 📂api
- ┃ ┃ ┣ 📂chat
- ┃ ┃ ┃ ┗ 📜route.ts
- ┃ ┃ ┗ 📂send-otp
- ┃ ┃ ┃ ┗ 📜route.ts
- ┃ ┣ 📂public
- ┃ ┃ ┣ 📂animations
- ┃ ┃ ┃ ┣ 📜Reactions.tsx
- ┃ ┃ ┃ ┣ 📜clap.json
- ┃ ┃ ┃ ┗ 📜streak.riv
- ┃ ┃ ┣ 📜FOCUS.jpeg
- ┃ ┃ ┣ 📜He.jpeg
- ┃ ┃ ┣ 📜Jesus.jpeg
- ┃ ┃ ┣ 📜ghost.jpeg
- ┃ ┃ ┣ 📜icon.jpg
- ┃ ┃ ┣ 📜icon@.jpg
- ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┣ 📜notification.mp3
- ┃ ┃ ┣ 📜squid.jpeg
- ┃ ┃ ┣ 📜tooth.jpeg
- ┃ ┃ ┣ 📜ultimi.jpeg
- ┃ ┃ ┗ 📜zoot.jpeg
- ┃ ┣ 📂theme
- ┃ ┃ ┗ 📜page.tsx
- ┃ ┣ 📜.DS_Store
- ┃ ┣ 📜favicon.ico
- ┃ ┣ 📜globals.css
- ┃ ┣ 📜layout.tsx
- ┃ ┗ 📜page.tsx
- ┣ 📂components
- ┃ ┣ 📂ui
- ┃ ┃ ┣ 📂leagueBadge
- ┃ ┃ ┃ ┣ 📜BronzeCelebration.tsx
- ┃ ┃ ┃ ┣ 📜CelebrationWrapper.tsx
- ┃ ┃ ┃ ┣ 📜DiamondCelebration.tsx
- ┃ ┃ ┃ ┣ 📜GoldCelebration.tsx
- ┃ ┃ ┃ ┣ 📜PalladiumCelebration.tsx
- ┃ ┃ ┃ ┣ 📜PlatinumCelebration.tsx
- ┃ ┃ ┃ ┗ 📜SilverCelebration.tsx
- ┃ ┃ ┣ 📜 popover.tsx
- ┃ ┃ ┣ 📜 tabs.tsx
- ┃ ┃ ┣ 📜ProtectedRoute.tsx
- ┃ ┃ ┣ 📜accordion.tsx
- ┃ ┃ ┣ 📜alert-dialog.tsx
- ┃ ┃ ┣ 📜app-sidebar.tsx
- ┃ ┃ ┣ 📜avatar.tsx
- ┃ ┃ ┣ 📜badge.tsx
- ┃ ┃ ┣ 📜box.tsx
- ┃ ┃ ┣ 📜button.tsx
- ┃ ┃ ┣ 📜card.tsx
- ┃ ┃ ┣ 📜carousel.tsx
- ┃ ┃ ┣ 📜chart.tsx
- ┃ ┃ ┣ 📜checkbox.tsx
- ┃ ┃ ┣ 📜collapsible.tsx
- ┃ ┃ ┣ 📜dialog.tsx
- ┃ ┃ ┣ 📜dropdown-menu.tsx
- ┃ ┃ ┣ 📜form.tsx
- ┃ ┃ ┣ 📜input-otp.tsx
- ┃ ┃ ┣ 📜input.tsx
- ┃ ┃ ┣ 📜label.tsx
- ┃ ┃ ┣ 📜pagination.tsx
- ┃ ┃ ┣ 📜profileTextArea.tsx
- ┃ ┃ ┣ 📜radio-group.tsx
- ┃ ┃ ┣ 📜select.tsx
- ┃ ┃ ┣ 📜separator.tsx
- ┃ ┃ ┣ 📜sheet.tsx
- ┃ ┃ ┣ 📜sidebar.tsx
- ┃ ┃ ┣ 📜skeleton.tsx
- ┃ ┃ ┣ 📜switch.tsx
- ┃ ┃ ┣ 📜table.tsx
- ┃ ┃ ┣ 📜tabs.tsx
- ┃ ┃ ┣ 📜textarea.tsx
- ┃ ┃ ┗ 📜tooltip.tsx
- ┃ ┣ 📂widgets
- ┃ ┃ ┣ 📜coming-soon.tsx
- ┃ ┃ ┗ 📜mobile-nav.tsx
- ┃ ┗ 📜chart-area-interactive.tsx
- ┣ 📂data
- ┃ ┗ 📜questions.ts
- ┣ 📂features
- ┃ ┣ 📂dashboard
- ┃ ┃ ┣ 📂components
- ┃ ┃ ┃ ┣ 📜.DS_Store
- ┃ ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┃ ┣ 📜league-badge-3d.tsx
- ┃ ┃ ┃ ┗ 📜league-badge-mesh.tsx
- ┃ ┃ ┣ 📂context
- ┃ ┃ ┃ ┗ 📜index.ts
- ┃ ┃ ┣ 📂hooks
- ┃ ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┃ ┣ 📜useChartOptions.tsx
- ┃ ┃ ┃ ┗ 📜useFetchStudentsStats.tsx
- ┃ ┃ ┣ 📜dashboard.module.tsx
- ┃ ┃ ┗ 📜index.ts
- ┃ ┣ 📂leaderboard
- ┃ ┃ ┣ 📂components
- ┃ ┃ ┃ ┣ 📜.DS_Store
- ┃ ┃ ┃ ┣ 📜filters.tsx
- ┃ ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┃ ┣ 📜leaderboard-table.tsx
- ┃ ┃ ┃ ┣ 📜league-filter.tsx
- ┃ ┃ ┃ ┣ 📜pagination-controls.tsx
- ┃ ┃ ┃ ┣ 📜search-input.tsx
- ┃ ┃ ┃ ┗ 📜table-content.tsx
- ┃ ┃ ┣ 📂context
- ┃ ┃ ┃ ┗ 📜index.ts
- ┃ ┃ ┣ 📂hooks
- ┃ ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┃ ┣ 📜useAuth.tsx
- ┃ ┃ ┃ ┣ 📜useConnect.tsx
- ┃ ┃ ┃ ┣ 📜useDataFetch.tsx
- ┃ ┃ ┃ ┣ 📜useDataFilters.tsx
- ┃ ┃ ┃ ┣ 📜useFetchData.tsx
- ┃ ┃ ┃ ┣ 📜useFetchStudentsStats.tsx
- ┃ ┃ ┃ ┗ 📜useFilters.tsx
- ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┗ 📜leaderboard.module.tsx
- ┃ ┣ 📂messages
- ┃ ┃ ┣ 📂components
- ┃ ┃ ┃ ┣ 📜chat-background-wrapper.tsx
- ┃ ┃ ┃ ┣ 📜chat-header.tsx
- ┃ ┃ ┃ ┣ 📜chat-list.tsx
- ┃ ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┃ ┣ 📜message-input.tsx
- ┃ ┃ ┃ ┗ 📜message-list.tsx
- ┃ ┃ ┣ 📂context
- ┃ ┃ ┃ ┗ 📜index.ts
- ┃ ┃ ┣ 📂hooks
- ┃ ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┃ ┣ 📜useConnectedUsers.tsx
- ┃ ┃ ┃ ┣ 📜useCurrentUser.tsx
- ┃ ┃ ┃ ┣ 📜useDeleteMessage.tsx
- ┃ ┃ ┃ ┣ 📜useMessages.tsx
- ┃ ┃ ┃ ┣ 📜useOnlineStatus.tsx
- ┃ ┃ ┃ ┣ 📜useRealtimeMessages.tsx
- ┃ ┃ ┃ ┣ 📜useScrollBehavior.tsx
- ┃ ┃ ┃ ┣ 📜useSendMessage.tsx
- ┃ ┃ ┃ ┗ 📜useSidebar.tsx
- ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┗ 📜messages.module.tsx
- ┃ ┣ 📂progress
- ┃ ┃ ┣ 📂components
- ┃ ┃ ┃ ┣ 📜activity-calendar.tsx
- ┃ ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┃ ┗ 📜progress-chart.tsx
- ┃ ┃ ┣ 📂context
- ┃ ┃ ┃ ┗ 📜index.ts
- ┃ ┃ ┣ 📂hooks
- ┃ ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┃ ┣ 📜useActivityData.ts
- ┃ ┃ ┃ ┣ 📜useAggregatedData.ts
- ┃ ┃ ┃ ┣ 📜useAvailableYears.ts
- ┃ ┃ ┃ ┣ 📜useCalendarData.ts
- ┃ ┃ ┃ ┣ 📜useCurrentDate.ts
- ┃ ┃ ┃ ┗ 📜useQuizScores.ts
- ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┗ 📜progress.module.tsx
- ┃ ┣ 📂quiz
- ┃ ┃ ┣ 📂components
- ┃ ┃ ┃ ┣ 📜.DS_Store
- ┃ ┃ ┃ ┣ 📜LoadingSpinner.tsx
- ┃ ┃ ┃ ┣ 📜NavigationButtons.tsx
- ┃ ┃ ┃ ┣ 📜PreviewQuestion.tsx
- ┃ ┃ ┃ ┣ 📜QuestionDisplay.tsx
- ┃ ┃ ┃ ┣ 📜QuizForm.tsx
- ┃ ┃ ┃ ┣ 📜ResultDisplay.tsx
- ┃ ┃ ┃ ┣ 📜SubjectSwitcher.tsx
- ┃ ┃ ┃ ┣ 📜SubmitButton.tsx
- ┃ ┃ ┃ ┗ 📜Timer.tsx
- ┃ ┃ ┣ 📂context
- ┃ ┃ ┃ ┗ 📜QuizContext.tsx
- ┃ ┃ ┣ 📜.DS_Store
- ┃ ┃ ┗ 📜quiz.module.tsx
- ┃ ┗ 📜.DS_Store
- ┣ 📂hooks
- ┃ ┗ 📜use-mobile.ts
- ┣ 📂lib
- ┃ ┣ 📜fetchQuestions.ts
- ┃ ┣ 📜questions.ts
- ┃ ┣ 📜reactions.ts
- ┃ ┣ 📜supabaseClient.ts
- ┃ ┣ 📜types.ts
- ┃ ┗ 📜utils.ts
- ┣ 📂schema
- ┃ ┣ 📂dashboard
- ┃ ┃ ┣ 📜index.ts
- ┃ ┃ ┣ 📜leagues.ts
- ┃ ┃ ┗ 📜mock-data.ts
- ┃ ┣ 📂message
- ┃ ┃ ┗ 📜backgroundOptions.ts
- ┃ ┗ 📜index.ts
- ┣ 📂styles
- ┃ ┗ 📜globals.css
- ┣ 📂types
- ┃ ┣ 📜dashboard.ts
- ┃ ┣ 📜nodemailer.d.ts
- ┃ ┗ 📜vanta.d.ts
- ┣ 📂utils
- ┃ ┣ 📜constants.ts
- ┃ ┣ 📜formatters.ts
- ┃ ┗ 📜index.ts
- ┗ 📜.DS_Store
+src/
+ ├─ app/
+ │   ├─ (auth)/
+ │   │   ├─ login/
+ │   │   │   └─ page.tsx
+ │   │   ├─ register/
+ │   │   │   └─ page.tsx
+ │   │   └─ layout.tsx
+ │   ├─ (main)/
+ │   │   ├─ connections/
+ │   │   │   └─ page.tsx
+ │   │   ├─ dashboard/
+ │   │   │   └─ page.tsx
+ │   │   ├─ flashCard/
+ │   │   │   ├─ [subject]/
+ │   │   │   │   ├─ [topic]/
+ │   │   │   │   │   └─ page.tsx
+ │   │   │   │   └─ page.tsx
+ │   │   │   └─ page.tsx
+ │   │   ├─ leaderboard/
+ │   │   │   └─ page.tsx
+ │   │   ├─ messages/
+ │   │   │   └─ page.tsx
+ │   │   ├─ notifications/
+ │   │   │   └─ page.tsx
+ │   │   ├─ opinions/
+ │   │   │   └─ page.tsx
+ │   │   ├─ progress/
+ │   │   │   └─ page.tsx
+ │   │   ├─ quiz/
+ │   │   │   ├─ domain-selection/
+ │   │   │   │   └─ page.tsx
+ │   │   │   ├─ home/
+ │   │   │   │   └─ page.tsx
+ │   │   │   ├─ preview/
+ │   │   │   │   └─ page.tsx
+ │   │   │   ├─ result/
+ │   │   │   │   └─ page.tsx
+ │   │   │   ├─ layout.tsx
+ │   │   │   ├─ page.tsx
+ │   │   │   └─ providers.tsx
+ │   │   ├─ settings/
+ │   │   │   └─ profile-setup/
+ │   │   │       └─ page.tsx
+ │   │   ├─ sponsors/
+ │   │   │   ├─ page.tsx
+ │   │   │   └─ types.ts
+ │   │   ├─ streaks/
+ │   │   │   └─ page.tsx
+ │   │   ├─ ultimi-ai/
+ │   │   │   └─ page.tsx
+ │   │   ├─ users/
+ │   │   │   └─ [id]/
+ │   │   │       └─ page.tsx
+ │   │   └─ layout.tsx
+ │   ├─ api/
+ │   │   ├─ chat/
+ │   │   │   └─ route.ts
+ │   │   └─ send-otp/
+ │   │       └─ route.ts
+ │   ├─ public/
+ │   │   ├─ animations/
+ │   │   │   ├─ Reactions.tsx
+ │   │   │   ├─ clap.json
+ │   │   │   └─ streak.riv
+ │   │   ├─ FOCUS.jpeg
+ │   │   ├─ He.jpeg
+ │   │   ├─ Jesus.jpeg
+ │   │   ├─ ghost.jpeg
+ │   │   ├─ icon.jpg
+ │   │   ├─ icon@.jpg
+ │   │   ├─ index.ts
+ │   │   ├─ notification.mp3
+ │   │   ├─ squid.jpeg
+ │   │   ├─ tooth.jpeg
+ │   │   ├─ ultimi.jpeg
+ │   │   └─ zoot.jpeg
+ │   ├─ theme/
+ │   │   └─ page.tsx
+ │   ├─ favicon.ico
+ │   ├─ globals.css
+ │   ├─ layout.tsx
+ │   └─ page.tsx
+ ├─ components/
+ │   ├─ ui/
+ │   │   ├─ leagueBadge/
+ │   │   │   ├─ BronzeCelebration.tsx
+ │   │   │   ├─ CelebrationWrapper.tsx
+ │   │   │   ├─ DiamondCelebration.tsx
+ │   │   │   ├─ GoldCelebration.tsx
+ │   │   │   ├─ PalladiumCelebration.tsx
+ │   │   │   ├─ PlatinumCelebration.tsx
+ │   │   │   └─ SilverCelebration.tsx
+ │   │   ├─ popover.tsx
+ │   │   ├─ tabs.tsx
+ │   │   ├─ ProtectedRoute.tsx
+ │   │   ├─ accordion.tsx
+ │   │   ├─ alert-dialog.tsx
+ │   │   ├─ app-sidebar.tsx
+ │   │   ├─ avatar.tsx
+ │   │   ├─ badge.tsx
+ │   │   ├─ box.tsx
+ │   │   ├─ button.tsx
+ │   │   ├─ card.tsx
+ │   │   ├─ carousel.tsx
+ │   │   ├─ chart.tsx
+ │   │   ├─ checkbox.tsx
+ │   │   ├─ collapsible.tsx
+ │   │   ├─ dialog.tsx
+ │   │   ├─ dropdown-menu.tsx
+ │   │   ├─ form.tsx
+ │   │   ├─ input-otp.tsx
+ │   │   ├─ input.tsx
+ │   │   ├─ label.tsx
+ │   │   ├─ pagination.tsx
+ │   │   ├─ profileTextArea.tsx
+ │   │   ├─ radio-group.tsx
+ │   │   ├─ select.tsx
+ │   │   ├─ separator.tsx
+ │   │   ├─ sheet.tsx
+ │   │   ├─ sidebar.tsx
+ │   │   ├─ skeleton.tsx
+ │   │   ├─ switch.tsx
+ │   │   ├─ table.tsx
+ │   │   ├─ textarea.tsx
+ │   │   └─ tooltip.tsx
+ │   ├─ widgets/
+ │   │   ├─ coming-soon.tsx
+ │   │   └─ mobile-nav.tsx
+ │   └─ chart-area-interactive.tsx
+ ├─ data/
+ │   └─ questions.ts
+ ├─ features/
+ │   ├─ dashboard/
+ │   │   ├─ components/
+ │   │   │   ├─ index.ts
+ │   │   │   ├─ league-badge-3d.tsx
+ │   │   │   └─ league-badge-mesh.tsx
+ │   │   ├─ context/
+ │   │   │   └─ index.ts
+ │   │   ├─ hooks/
+ │   │   │   ├─ index.ts
+ │   │   │   ├─ useChartOptions.tsx
+ │   │   │   └─ useFetchStudentsStats.tsx
+ │   │   ├─ dashboard.module.tsx
+ │   │   └─ index.ts
+ │   ├─ leaderboard/
+ │   │   ├─ components/
+ │   │   │   ├─ filters.tsx
+ │   │   │   ├─ leaderboard-table.tsx
+ │   │   │   ├─ league-filter.tsx
+ │   │   │   ├─ pagination-controls.tsx
+ │   │   │   ├─ search-input.tsx
+ │   │   │   └─ table-content.tsx
+ │   │   ├─ context/
+ │   │   │   └─ index.ts
+ │   │   ├─ hooks/
+ │   │   │   ├─ useAuth.tsx
+ │   │   │   ├─ useConnect.tsx
+ │   │   │   ├─ useDataFetch.tsx
+ │   │   │   ├─ useDataFilters.tsx
+ │   │   │   ├─ useFetchData.tsx
+ │   │   │   ├─ useFetchStudentsStats.tsx
+ │   │   │   └─ useFilters.tsx
+ │   │   ├─ index.ts
+ │   │   └─ leaderboard.module.tsx
+ │   ├─ messages/
+ │   │   ├─ components/
+ │   │   │   ├─ chat-background-wrapper.tsx
+ │   │   │   ├─ chat-header.tsx
+ │   │   │   ├─ chat-list.tsx
+ │   │   │   ├─ message-input.tsx
+ │   │   │   └─ message-list.tsx
+ │   │   ├─ context/
+ │   │   │   └─ index.ts
+ │   │   ├─ hooks/
+ │   │   │   ├─ useConnectedUsers.tsx
+ │   │   │   ├─ useCurrentUser.tsx
+ │   │   │   ├─ useDeleteMessage.tsx
+ │   │   │   ├─ useMessages.tsx
+ │   │   │   ├─ useOnlineStatus.tsx
+ │   │   │   ├─ useRealtimeMessages.tsx
+ │   │   │   ├─ useScrollBehavior.tsx
+ │   │   │   ├─ useSendMessage.tsx
+ │   │   │   └─ useSidebar.tsx
+ │   │   ├─ index.ts
+ │   │   └─ messages.module.tsx
+ │   ├─ progress/
+ │   │   ├─ components/
+ │   │   │   ├─ activity-calendar.tsx
+ │   │   │   ├─ progress-chart.tsx
+ │   │   │   └─ index.ts
+ │   │   ├─ hooks/
+ │   │   │   ├─ useActivityData.ts
+ │   │   │   ├─ useAggregatedData.ts
+ │   │   │   ├─ useAvailableYears.ts
+ │   │   │   ├─ useCalendarData.ts
+ │   │   │   ├─ useCurrentDate.ts
+ │   │   │   └─ useQuizScores.ts
+ │   │   ├─ index.ts
+ │   │   └─ progress.module.tsx
+ │   ├─ quiz/
+ │   │   ├─ components/
+ │   │   │   ├─ LoadingSpinner.tsx
+ │   │   │   ├─ NavigationButtons.tsx
+ │   │   │   ├─ PreviewQuestion.tsx
+ │   │   │   ├─ QuestionDisplay.tsx
+ │   │   │   ├─ QuizForm.tsx
+ │   │   │   ├─ ResultDisplay.tsx
+ │   │   │   ├─ SubjectSwitcher.tsx
+ │   │   │   ├─ SubmitButton.tsx
+ │   │   │   └─ Timer.tsx
+ │   │   ├─ context/
+ │   │   │   └─ QuizContext.tsx
+ │   │   └─ quiz.module.tsx
+ ├─ hooks/
+ │   └─ use-mobile.ts
+ ├─ lib/
+ │   ├─ fetchQuestions.ts
+ │   ├─ questions.ts
+ │   ├─ reactions.ts
+ │   ├─ supabaseClient.ts
+ │   ├─ types.ts
+ │   └─ utils.ts
+ ├─ schema/
+ │   ├─ dashboard/
+ │   │   ├─ index.ts
+ │   │   ├─ leagues.ts
+ │   │   └─ mock-data.ts
+ │   ├─ message/
+ │   │   └─ backgroundOptions.ts
+ │   └─ index.ts
+ ├─ styles/
+ │   └─ globals.css
+ ├─ types/
+ │   ├─ dashboard.ts
+ │   ├─ nodemailer.d.ts
+ │   └─ vanta.d.ts
+ ├─ utils/
+ │   ├─ constants.ts
+ │   ├─ formatters.ts
+ │   └─ index.ts
+
 
 
 
