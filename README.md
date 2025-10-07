@@ -280,6 +280,8 @@ Once installed, you can:
 
 
 Folder Structure:
+
+```text
 src/
  ├─ app/
  │   ├─ (auth)/
