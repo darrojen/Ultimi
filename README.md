@@ -182,6 +182,7 @@ Install dependencies:
 
 npm install
 
+```text
 
 Create an environment file:
 In the project root, create a .env.local file and add the required environment variables (e.g., Supabase keys, AI API keys, email credentials). Example:
@@ -198,6 +199,7 @@ GEMINI_API_KEY=
 NEXT_PUBLIC_API_URL=https://questions.aloc.com.ng/api/v2/q
 NEXT_PUBLIC_API_TOKEN=
 
+```
 
 
 Run the development server:
@@ -282,6 +284,7 @@ Once installed, you can:
 Folder Structure:
 
 ```text
+
 src/
  ├─ app/
  │   ├─ (auth)/
@@ -526,7 +529,7 @@ src/
  │   └─ index.ts
 
 
-
+```
 
 👥 Team Information:
 
