@@ -1,49 +1,128 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import Image from "next/image";
 
 interface Message {
   sender: "user" | "bot";
   text: string;
   typing?: boolean;
   id: number;
-  image?: string; // 👈 new (for uploaded images)
+  images?: string[];
+  liked?: boolean;
+  disliked?: boolean;
 }
 
 export default function ChatbotPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [pendingImages, setPendingImages] = useState<File[]>([]);
+  const [pendingImagePreviews, setPendingImagePreviews] = useState<string[]>([]);
 
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const messageIdRef = useRef(0);
 
-  // --- Typing effect helper ---
   const typeBotMessage = (fullText: string, tempMsgId: number, speed = 20) => {
     let index = 0;
-
     const interval = setInterval(() => {
       index++;
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === tempMsgId ? { ...m, text: fullText.slice(0, index) } : m
+          m.id === tempMsgId
+            ? { ...m, text: fullText.slice(0, index), typing: index < fullText.length }
+            : m
         )
       );
-
       if (index >= fullText.length) clearInterval(interval);
     }, speed);
   };
 
-  // --- Send text message ---
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const handleLike = (id: number) => {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === id
+          ? { ...m, liked: !m.liked, disliked: m.liked ? m.disliked : false }
+          : m
+      )
+    );
+  };
 
-    const userMessage: Message = { sender: "user", text: input, id: messageIdRef.current++ };
+  const handleDislike = (id: number) => {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === id
+          ? { ...m, disliked: !m.disliked, liked: m.disliked ? m.liked : false }
+          : m
+      )
+    );
+  };
+
+  const handleSend = async (overrideText?: string) => {
+    const messageText = overrideText ?? input;
+    if (!messageText.trim() && pendingImages.length === 0) return;
+
+    if (pendingImages.length > 0) {
+      const previews = [...pendingImagePreviews];
+      const userMsg: Message = {
+        sender: "user",
+        text: messageText || "[Images]",
+        images: previews,
+        id: messageIdRef.current++,
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      setInput("");
+      setPendingImages([]);
+      setPendingImagePreviews([]);
+
+      const tempBotMsg: Message = { sender: "bot", text: "", typing: true, id: messageIdRef.current++ };
+      setMessages((prev) => [...prev, tempBotMsg]);
+      setIsTyping(true);
+
+      try {
+        const promises = pendingImages.map(
+          (file) =>
+            new Promise<string>((resolve) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                const base64 = reader.result?.toString().split(",")[1] || "";
+                resolve(base64);
+              };
+              reader.readAsDataURL(file);
+            })
+        );
+        const base64Images = await Promise.all(promises);
+
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageBase64: base64Images, description: messageText }),
+        });
+        const data = await res.json();
+        typeBotMessage(data.reply, tempBotMsg.id, 20);
+      } catch {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === tempBotMsg.id
+              ? { sender: "bot", text: "Error: Could not analyze images.", id: tempBotMsg.id, typing: false }
+              : m
+          )
+        );
+      } finally {
+        setIsTyping(false);
+      }
+      return;
+    }
+
+    const userMessage: Message = { sender: "user", text: messageText, id: messageIdRef.current++ };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
-    // Temporary typing bubble
     const tempBotMsg: Message = { sender: "bot", text: "", typing: true, id: messageIdRef.current++ };
     setMessages((prev) => [...prev, tempBotMsg]);
     setIsTyping(true);
@@ -52,17 +131,15 @@ export default function ChatbotPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage.text }),
+        body: JSON.stringify({ message: messageText }),
       });
       const data = await res.json();
-
-      // Use typing effect (text-only)
       typeBotMessage(data.reply, tempBotMsg.id, 20);
-    } catch (err) {
+    } catch {
       setMessages((prev) =>
         prev.map((m) =>
           m.id === tempBotMsg.id
-            ? { sender: "bot", text: "Error: Could not get response.", id: tempBotMsg.id }
+            ? { sender: "bot", text: "Error: Could not get response.", id: tempBotMsg.id, typing: false }
             : m
         )
       );
@@ -71,57 +148,19 @@ export default function ChatbotPage() {
     }
   };
 
-  // --- Upload image ---
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const base64 = reader.result?.toString().split(",")[1];
-      if (!base64) return;
-
-      // Show image in user bubble
-      const userMsg: Message = {
-        sender: "user",
-        text: "[Image Uploaded]",
-        image: URL.createObjectURL(file),
-        id: messageIdRef.current++,
-      };
-      setMessages((prev) => [...prev, userMsg]);
-
-      // Temporary bot bubble
-      const tempBotMsg: Message = { sender: "bot", text: "", typing: true, id: messageIdRef.current++ };
-      setMessages((prev) => [...prev, tempBotMsg]);
-      setIsTyping(true);
-
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ imageBase64: base64 }),
-        });
-
-        const data = await res.json();
-
-        // Use typing effect (text-only)
-        typeBotMessage(data.reply, tempBotMsg.id, 20);
-      } catch (err) {
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === tempBotMsg.id
-              ? { sender: "bot", text: "Error: Could not analyze image.", id: tempBotMsg.id }
-              : m
-          )
-        );
-      } finally {
-        setIsTyping(false);
-      }
-    };
-    reader.readAsDataURL(file);
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+    const files = Array.from(e.target.files);
+    const previews = files.map((f) => URL.createObjectURL(f));
+    setPendingImages((prev) => [...prev, ...files]);
+    setPendingImagePreviews((prev) => [...prev, ...previews]);
   };
 
-  // --- Enter key sends message ---
+  const removePendingImage = (index: number) => {
+    setPendingImages((prev) => prev.filter((_, i) => i !== index));
+    setPendingImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -129,146 +168,297 @@ export default function ChatbotPage() {
     }
   };
 
-  // --- Auto resize textarea ---
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+      setIsExpanded(textareaRef.current.scrollHeight > 40);
+      textareaRef.current.style.overflowY =
+        textareaRef.current.scrollHeight > 200 ? "auto" : "hidden";
     }
-  }, [input]);
+  }, [input, pendingImagePreviews]);
 
-  // --- Scroll chat ---
   useEffect(() => {
     const chat = chatContainerRef.current;
-    if (chat) chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
+    if (!chat) return;
+    const isNearBottom = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 100;
+    if (isNearBottom) chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // --- Speech-to-Text ---
   const startListening = () => {
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) return alert("Your browser does not support Speech Recognition");
 
+    setIsRecording(true);
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
-    recognition.interimResults = false;
+    recognition.interimResults = true;
 
+    let finalTranscript = "";
     recognition.onresult = (event: any) => {
-      const speechText = event.results[0][0].transcript;
-      setInput(speechText);
+      let interimTranscript = "";
+      for (let i = 0; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalTranscript += transcript + " ";
+        else interimTranscript += transcript;
+      }
+      setInput(finalTranscript + interimTranscript);
     };
-
+    recognition.onend = () => {
+      setIsRecording(false);
+      const trimmed = finalTranscript.trim();
+      if (trimmed) handleSend(trimmed);
+    };
     recognition.start();
   };
 
   return (
     <div className="p-6 flex flex-col items-center h-screen overflow-hidden relative">
-      {/* Header */}
       <h1 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-blue-800 to-blue-400 bg-clip-text text-transparent tracking-tight">
         Ultimi Ai
       </h1>
 
+      {/* AI Sphere */}
+      <div className="relative flex flex-col items-center mb-12">
+        <div className="relative">
+          {/* Outer Glow */}
+          <div className="absolute w-32 h-32 rounded-full bg-blue-400 opacity-20 animate-pulse-glow top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+
+          {/* Ripple Circles */}
+          <div className="absolute w-12 h-12 bg-blue-400 rounded-full animate-ripple-delay0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute w-12 h-12 bg-blue-400 rounded-full animate-ripple-delay200 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute w-12 h-12 bg-blue-400 rounded-full animate-ripple-delay400 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
+      </div>
+
       {/* Chat Area */}
       <div
         ref={chatContainerRef}
-        className="chat-container flex-1 mb-4 flex flex-col w-full md:w-2/3 gap-16 overflow-y-auto"
+        className="chat-container flex-1 mb-24 flex flex-col w-full md:w-2/3 gap-16 overflow-y-auto"
       >
         {messages.length === 0 && (
           <p className="text-center text-muted-foreground mt-4">
             Start a conversation with Ultimi Ai ✨
           </p>
         )}
-
         {messages.map((msg) => (
           <div
             key={msg.id}
-            className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
+            className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"} animate-fade-in group relative`}
           >
-            {msg.sender === "user" ? (
-              <div className="px-4 py-2 rounded-xl break-words bg-blue-50 text-gray-700 text-sm shadow-md max-w-[65ch] w-full sm:w-auto">
-                {msg.image && (
-                  <img src={msg.image} alt="Uploaded" className="rounded-md mb-2 max-w-[200px]" />
-                )}
-                {msg.text}
-              </div>
-            ) : (
-              <div className="text-gray-700 text-sm max-w-[80%] break-words">
-                {msg.text}
-                {isTyping && msg.sender === "bot" && msg.typing && (
-                  <span className="animate-blink">|</span>
-                )}
-              </div>
-            )}
+            <div
+              className={`relative px-4 py-2 rounded-xl break-words max-w-[65ch] w-full sm:w-auto ${
+                msg.sender === "user"
+                  ? "bg-blue-50 text-gray-700 shadow-md"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 shadow-md prose prose-sm dark:prose-invert whitespace-pre-wrap"
+              }`}
+            >
+              {msg.images?.map((img, i) => (
+                <Image
+                  key={i}
+                  src={img}
+                  alt="Uploaded"
+                  width={250}
+                  height={250}
+                  className="rounded-md mb-2 object-cover"
+                  priority
+                />
+              ))}
+
+              {msg.sender === "bot" ? (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {msg.text}
+                </ReactMarkdown>
+              ) : (
+                msg.text
+              )}
+
+              {msg.sender === "bot" && msg.typing && <span className="animate-blink">|</span>}
+
+              {msg.sender === "user" && (
+                <div className="absolute -bottom-6 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-full px-2 py-1 shadow-md">
+                  <button title="Copy" className="text-sm hover:scale-110">📋</button>
+                  <button title="Edit" className="text-sm hover:scale-110">✏️</button>
+                </div>
+              )}
+
+              {msg.sender === "bot" && (
+                <div className="absolute -bottom-6 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-full px-2 py-1 shadow-md">
+                  <button title="Copy" className="text-sm hover:scale-110">📋</button>
+                  <button title="Like" onClick={() => handleLike(msg.id)} className="text-sm hover:scale-110">
+                    {msg.liked ? "👍🏼" : "👍"}
+                  </button>
+                  <button title="Dislike" onClick={() => handleDislike(msg.id)} className="text-sm hover:scale-110">
+                    {msg.disliked ? "👎🏼" : "👎"}
+                  </button>
+                  <button title="Regenerate" className="text-sm hover:scale-110">♻️</button>
+                </div>
+              )}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Input Section */}
-      <div className="flex w-full md:w-2/3 relative bg-background dark:bg-gray-900 border border-border rounded-xl p-1.5 shadow-sm z-10 items-end">
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder="Ask me anything..."
-          className="w-full resize-none overflow-hidden bg-transparent focus:outline-none focus:ring-0 p-2 rounded-none border-none shadow-none text-sm text-gray-700 dark:text-gray-200"
-          rows={1}
-        />
-        <label className="flex-shrink-0 cursor-pointer bg-gray-200 dark:bg-gray-700 text-black dark:text-white p-2 rounded-full ml-2">
-          📷
-          <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-        </label>
-        <button
-          onClick={startListening}
-          className="flex-shrink-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-black dark:text-white p-2 rounded-full ml-2"
+      {/* Input Bar */}
+      <div className="fixed bottom-6 w-full flex justify-center">
+        <div
+          className="flex flex-col items-start bg-background dark:bg-gray-900 border border-border shadow-lg md:w-1/2 w-[90%] px-3"
+          style={{
+            borderRadius:
+              isExpanded || pendingImagePreviews.length > 0 ? "1rem" : "9999px",
+            paddingTop:
+              isExpanded || pendingImagePreviews.length > 0 ? "0.75rem" : "0.5rem",
+            paddingBottom:
+              isExpanded || pendingImagePreviews.length > 0 ? "0.75rem" : "0.5rem",
+            transition: "border-radius 0.3s ease, padding 0.3s ease",
+          }}
         >
-          🎤
-        </button>
-        <button
-          onClick={handleSend}
-          className="flex-shrink-0 flex items-center justify-center bg-primary p-2 rounded-full ml-2"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-send-horizontal-icon text-white drop-shadow-md"
-          >
-            <path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" />
-            <path d="M6 12h16" />
-          </svg>
-        </button>
+          {pendingImagePreviews.length > 0 && (
+            <div className="flex gap-2 mb-2">
+              {pendingImagePreviews.map((img, i) => (
+                <div
+                  key={i}
+                  className="relative w-24 h-24 border border-gray-400 rounded-md overflow-hidden"
+                >
+                  <Image
+                    src={img}
+                    alt="Pending"
+                    fill
+                    style={{ objectFit: "cover" }}
+                    priority
+                  />
+                  <button
+                    onClick={() => removePendingImage(i)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex items-end w-full">
+            <label className="flex-shrink-0 flex items-center justify-center bg-primary/60 hover:bg-primary transition p-2 rounded-full mr-2 cursor-pointer">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-image-icon drop-shadow-md"
+              >
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                <circle cx="9" cy="9" r="2" />
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+              </svg>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+            </label>
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyPress}
+              placeholder="Ask me anything..."
+              className="flex-1 resize-none overflow-hidden bg-transparent focus:outline-none focus:ring-0 p-2 rounded-none border-none shadow-none text-sm text-gray-700 dark:text-gray-200"
+              rows={1}
+            />
+            <button
+              onClick={startListening}
+              className="flex-shrink-0 flex items-center justify-center bg-primary/60 hover:bg-primary transition p-2 rounded-full ml-2 relative"
+            >
+              {isRecording && (
+                <>
+                  <span className="absolute inset-0 rounded-full border-2 border-blue-400 animate-ping-ripple"></span>
+                  <span className="absolute inset-0 rounded-full border-2 border-blue-400 opacity-50 animate-ping-ripple delay-200"></span>
+                </>
+              )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-mic-icon drop-shadow-md relative z-10"
+              >
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </button>
+            <button
+              onClick={() => handleSend()}
+              className="flex-shrink-0 flex items-center justify-center bg-primary/60 hover:bg-primary transition p-2 rounded-full ml-2 shadow-md"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-send-horizontal-icon text-white drop-shadow-md"
+              >
+                <path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" />
+                <path d="M6 12h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Animations */}
       <style jsx>{`
         .animate-blink {
           animation: blink 1s step-start infinite;
         }
         @keyframes blink {
-          50% {
-            opacity: 0;
-          }
+          50% { opacity: 0; }
         }
         .animate-fade-in {
           animation: fadeIn 0.3s ease-in;
         }
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(5px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
         }
+        .animate-ping-ripple {
+          animation: ping-ripple 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+        @keyframes ping-ripple {
+          0% { transform: scale(0.8); opacity: 0.6; }
+          50% { transform: scale(1.4); opacity: 0.3; }
+          100% { transform: scale(0.8); opacity: 0.6; }
+        }
+        .delay-200 { animation-delay: 0.2s; }
+        .animate-pulse-glow {
+          animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+          0% { transform: scale(0.9); opacity: 0.2; }
+          50% { transform: scale(1.1); opacity: 0.3; }
+          100% { transform: scale(0.9); opacity: 0.2; }
+        }
+        .animate-ripple-delay0 { animation: ping-ripple 1.5s infinite; }
+        .animate-ripple-delay200 { animation: ping-ripple 1.5s 0.2s infinite; }
+        .animate-ripple-delay400 { animation: ping-ripple 1.5s 0.4s infinite; }
       `}</style>
     </div>
   );
