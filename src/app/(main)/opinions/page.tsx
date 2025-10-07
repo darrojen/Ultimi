@@ -4742,7 +4742,7 @@ export default function Opinions() {
           )}
         </div>
       </main>
-      <footer className="flex-shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-3 pb-[80px] sm:p-4 pb-[25px] sm:pb-[0px]">
+      <footer className="flex-shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-3 pb-[80px] sm:p-4 pb-[25px] sm:pb-[20px]">
         <div className="max-w-3xl mx-auto w-full flex flex-col sm:flex-row gap-2">
           <Textarea
             value={newOpinion}
@@ -4763,7 +4763,7 @@ export default function Opinions() {
         </div>
       </footer>
       {showScrollButton && (
-        <div className="fixed bottom-[170px] right-3 sm:right-4">
+        <div className="fixed bottom-[170px] right-3 sm:right-4 sm:bottom-[70px]">
           <Button
             size="icon"
             variant="secondary"
