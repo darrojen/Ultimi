@@ -182,6 +182,7 @@ Install dependencies:
 
 npm install
 
+```text
 
 Create an environment file:
 In the project root, create a .env.local file and add the required environment variables (e.g., Supabase keys, AI API keys, email credentials). Example:
