@@ -205,9 +205,10 @@ NEXT_PUBLIC_API_TOKEN=
 ```
 
 
-Run the development server:
+#### Run the development server:
+```text
 npm run dev
-
+```
 
 Open the app in your browser:
 
