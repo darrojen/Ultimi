@@ -14,6 +14,7 @@ import {
   User as UserIcon,
   LogOut,
   Users,
+  SwatchBook,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -57,6 +58,7 @@ export const moreMobileNavItems: NavItem[] = [
   { title: 'Progress', url: '/progress', icon: ChartNoAxesCombined },
   { title: 'Sponsors', url: '/sponsors', icon: HandHelping },
   { title: 'Ultimi AI', url: '/ultimi-ai', icon: Cpu },
+  { title: 'Flashcards', url: '/flashCard', icon: SwatchBook },
   { title: 'Notifications', url: '/notifications', icon: Bell },
   { title: 'Messages', url: '/messages', icon: MessageCircle },
   { title: 'Connections', url: '/connections', icon: Users },

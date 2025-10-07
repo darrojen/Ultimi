@@ -509,12 +509,11 @@
 
 
 
-
 'use client';
 
 import { useContext, useState, ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Play, AlertCircle, RefreshCw, Plus, Minus, ArrowLeft } from 'lucide-react';
+import { Play, AlertCircle, RefreshCw, Plus, Minus, ArrowLeft, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { QuizContext } from '@/features/quiz/context/QuizContext';
 import { Button } from '@/components/ui/button';
@@ -571,6 +570,12 @@ interface QuizFormProps {
   onBack: () => void;
 }
 
+type QuestionItem = {
+  question: string
+  option: string
+  [key: string]: any
+};
+
 export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
   const {
     selectedSubjects,
@@ -592,6 +597,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
   const [error, setError] = useState('');
   const [fetchedQuestions, setFetchedQuestions] = useState<Record<string, Question[]>>({});
   const [loadingSubjects, setLoadingSubjects] = useState<Set<string>>(new Set());
+  const [isStartingQuiz, setIsStartingQuiz] = useState(false);
   const maxSubjects =
     examType === 'WAEC' || examType === 'NECO'
       ? 9
@@ -634,16 +640,13 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
     normal: 'post-utme',
   };
 
-   type QuestionItem = {
-  question: string
-  option: string
-  [key: string]: any
-};
   const fetchQuestions = async (subject: string, apiExamType?: string, count: number = 100): Promise<Question[]> => {
     const mappedSubject = subjectMapping[subject] || subject;
     const apiType = apiExamType ? `&type=${apiExamType}` : '';
+    const endpoint = count > 40 ? `/m?subject=${mappedSubject}${apiType}` : `/q/${count}?subject=${mappedSubject}${apiType}`;
+    const url = `https://questions.aloc.com.ng/api/v2${endpoint}`;
     try {
-      const response = await fetch(`https://questions.aloc.com.ng/api/v2/q/${count}?subject=${mappedSubject}${apiType}`, {
+      const response = await fetch(url, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -680,6 +683,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
             image: q.image || '',
           };
         });
+      console.log(`Fetched ${questions.length} questions for ${subject} (${apiExamType || 'all types'}). Requested: ${count}`); // Debug log
       return questions;
     } catch (error) {
       console.error(`Failed to fetch questions for ${subject}:`, error);
@@ -705,8 +709,8 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
               console.error('Failed to parse cached questions:', e);
             }
           }
-          if (questions.length === 0) {
-            questions = await fetchQuestions(sub, apiExamType, 40);
+          if (questions?.length === 0) {
+            questions = await fetchQuestions(sub, apiExamType, 100);
             if (questions.length > 0) {
               localStorage.setItem(cachedKey, JSON.stringify(questions));
             }
@@ -724,30 +728,15 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
     if (selectedSubjects.length > 0 && selectedSubjects.some(sub => !fetchedQuestions[sub])) {
       loadAllQuestions();
     }
-  }, [selectedSubjects, examType]);
+  }, [selectedSubjects, examType, fetchedQuestions]);
 
   useEffect(() => {
-    const apiExamType = examTypeMapping[examType];
-    if (examType === 'JAMB' && !selectedSubjects.includes('english')) {
-      handleSubjectChange('english', true);
-    }
-    if (['WAEC', 'NECO'].includes(examType) && !selectedSubjects.includes('math')) {
-      handleSubjectChange('math', true);
-    }
     // Clear cache if examType changes
     Object.keys(fetchedQuestions).forEach(sub => localStorage.removeItem(`questions_${sub}_${examType}`));
     setFetchedQuestions({});
   }, [examType]);
 
   const handleSubjectChange = (sub: string, checked: boolean) => {
-    if (examType === 'JAMB' && sub === 'english' && !checked) {
-      setError('English is compulsory for JAMB.');
-      return;
-    }
-    if (['WAEC', 'NECO'].includes(examType) && sub === 'math' && !checked) {
-      setError('Math is compulsory for WAEC/NECO.');
-      return;
-    }
     const newSubjects = checked
       ? [...selectedSubjects, sub]
       : selectedSubjects.filter(s => s !== sub);
@@ -829,12 +818,11 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
     return (
       selectedSubjects.length > 0 &&
       hasQuestions &&
-      withinLimits &&
-      !(examType === 'JAMB' && !selectedSubjects.includes('english')) 
+      withinLimits
     );
   };
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (loadingSubjects.size > 0) {
       setError('Please wait while loading questions...');
       return;
@@ -842,8 +830,6 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
     if (!isFormValid()) {
       if (selectedSubjects.length === 0) {
         setError('Please select at least one subject.');
-      } else if (examType === 'JAMB' && !selectedSubjects.includes('english')) {
-        setError('English is compulsory for JAMB.');
       } else if (!selectedSubjects.every(sub => (questionsPerSubject[sub] || 0) > 0)) {
         setError('Number of questions cannot be zero for any subject.');
       } else {
@@ -862,27 +848,32 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
       return;
     }
 
-    const generatedQuestions: Record<string, Question[]> = {};
-    for (const sub of selectedSubjects) {
-      const pool = fetchedQuestions[sub];
-      if (!pool || pool.length === 0) {
-        setError(`No questions available for ${sub.replace('_', ' ')}`);
-        return;
+    setIsStartingQuiz(true);
+    try {
+      const generatedQuestions: Record<string, Question[]> = {};
+      for (const sub of selectedSubjects) {
+        const pool = fetchedQuestions[sub];
+        if (!pool || pool.length === 0) {
+          setError(`No questions available for ${sub.replace('_', ' ')}`);
+          return;
+        }
+        const count = questionsPerSubject[sub] || 1;
+        if (count > pool.length) {
+          setError(`Not enough questions available for ${sub.replace('_', ' ')}`);
+          return;
+        }
+        const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
+        generatedQuestions[sub] = shuffled;
       }
-      const count = questionsPerSubject[sub] || 1;
-      if (count > pool.length) {
-        setError(`Not enough questions available for ${sub.replace('_', ' ')}`);
-        return;
-      }
-      const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
-      generatedQuestions[sub] = shuffled;
-    }
 
-    setQuestions(generatedQuestions);
-    setCurrentSubject(selectedSubjects[0] || '');
-    setCurrentIndices(selectedSubjects.reduce((acc: Record<string, number>, s) => ({ ...acc, [s]: 0 }), {}));
-    setTotalTime(timeInSec);
-    router.push('/quiz/home');
+      setQuestions(generatedQuestions);
+      setCurrentSubject(selectedSubjects[0] || '');
+      setCurrentIndices(selectedSubjects.reduce((acc: Record<string, number>, s) => ({ ...acc, [s]: 0 }), {}));
+      setTotalTime(timeInSec);
+      router.push('/quiz/home');
+    } finally {
+      setIsStartingQuiz(false);
+    }
   };
 
   const handleReset = () => {
@@ -902,7 +893,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
   return (
     <motion.form
       onSubmit={e => e.preventDefault()}
-      className="space-y-8 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8"
+      className="space-y-8 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-30 sm: pb-0"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -914,11 +905,11 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="flex items-center text-sm"
+            className="flex items-center text-sm w-full"
             role="alert"
           >
-            <AlertCircle className="mr-2 h-4 w-4" />
-            {error}
+            <AlertCircle className="mr-2 h-4 w-4 flex-shrink-0" />
+            <span className="truncate">{error}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -928,40 +919,42 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={onBack}
-        className="flex items-center text-sm"
+        className="flex items-center text-sm w-full sm:w-auto"
       >
-        <ArrowLeft className="mr-2 h-4 w-4" />
+        <ArrowLeft className="mr-2 h-4 w-4 flex-shrink-0" />
         Back to Exam Type
       </motion.button>
 
       {/* Subjects Selection Section */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Select Subjects</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl font-bold">Select Subjects</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {route !== 'arts' && (
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Science Subjects</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {scienceSubjects.map(sub => (
+              <h3 className="font-semibold text-base sm:text-lg">Science Subjects</h3>
+              {/* Responsive grid: 1 col on mobile, up to 4 on large */}
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
+                {scienceSubjects.map((sub) => (
                   <motion.div
                     key={sub}
                     whileHover={{ scale: 1.02 }}
-                    className="flex items-center space-x-3 p-3 border rounded-lg hover:border-gray-300 transition-colors"
+                    className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 border rounded-md sm:rounded-lg hover:border-gray-300 transition-colors min-w-[140px] xs:min-w-[150px] sm:min-w-[160px] lg:min-w-[180px] flex-grow"
                   >
                     <Checkbox
                       id={sub}
                       checked={selectedSubjects.includes(sub)}
-                      onCheckedChange={checked => handleSubjectChange(sub, Boolean(checked))}
-                      disabled={
-                        (sub === 'english' && examType === 'JAMB' && selectedSubjects.includes('english')) ||
-                        (sub === 'math' && ['WAEC', 'NECO'].includes(examType) && selectedSubjects.includes('math'))
+                      onCheckedChange={(checked) =>
+                        handleSubjectChange(sub, Boolean(checked))
                       }
-                      className="h-5 w-5"
+                      className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0"
                       aria-label={`Select ${sub.replace('_', ' ')}`}
                     />
-                    <Label htmlFor={sub} className="capitalize text-base cursor-pointer">
+                    <Label
+                      htmlFor={sub}
+                      className="text-sm sm:text-base cursor-pointer capitalize leading-tight"
+                    >
                       {sub.replace('_', ' ')}
                     </Label>
                   </motion.div>
@@ -969,28 +962,32 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
               </div>
             </div>
           )}
+
           {route !== 'science' && (
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Arts/Commercial/Languages</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {artsSubjects.map(sub => (
+              <h3 className="font-semibold text-base sm:text-lg">
+                Arts/Commercial/Languages
+              </h3>
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 lg:gap-4">
+                {artsSubjects.map((sub) => (
                   <motion.div
                     key={sub}
                     whileHover={{ scale: 1.02 }}
-                    className="flex items-center space-x-3 p-3 border rounded-lg hover:border-gray-300 transition-colors"
+                    className="flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 border rounded-md sm:rounded-lg hover:border-gray-300 transition-colors min-w-[140px] xs:min-w-[150px] sm:min-w-[160px] lg:min-w-[180px] flex-grow"
                   >
                     <Checkbox
                       id={sub}
                       checked={selectedSubjects.includes(sub)}
-                      onCheckedChange={checked => handleSubjectChange(sub, Boolean(checked))}
-                      disabled={
-                        (sub === 'english' && examType === 'JAMB' && selectedSubjects.includes('english')) ||
-                        (sub === 'math' && ['WAEC', 'NECO'].includes(examType) && selectedSubjects.includes('math'))
+                      onCheckedChange={(checked) =>
+                        handleSubjectChange(sub, Boolean(checked))
                       }
-                      className="h-5 w-5"
+                      className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0"
                       aria-label={`Select ${sub.replace('_', ' ')}`}
                     />
-                    <Label htmlFor={sub} className="capitalize text-base cursor-pointer">
+                    <Label
+                      htmlFor={sub}
+                      className="text-sm sm:text-base cursor-pointer capitalize leading-tight"
+                    >
                       {sub.replace('_', ' ')}
                     </Label>
                   </motion.div>
@@ -1005,37 +1002,37 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
       {selectedSubjects.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">Number of Questions per Subject</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl font-bold">Number of Questions per Subject</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
               {selectedSubjects.map(sub => {
                 if (loadingSubjects.has(sub)) {
                   return (
-                    <div key={sub} className="flex items-center justify-between py-6 border rounded-lg">
-                      <div className="h-5 bg-gray-200 rounded w-32 animate-pulse"></div>
-                      <div className="flex items-center gap-2">
-                        <div className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
-                        <div className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
-                        <div className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
+                    <div key={sub} className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 sm:py-6 px-3 sm:px-4 border rounded-lg gap-3 sm:gap-4">
+                      <div className="h-5 bg-gray-200 rounded w-full sm:w-32 animate-pulse"></div>
+                      <div className="flex items-center justify-between sm:justify-start gap-1 sm:gap-2 w-full sm:w-auto">
+                        <div className="h-10 w-10 bg-gray-200 rounded animate-pulse flex-shrink-0"></div>
+                        <div className="h-10 w-20 bg-gray-200 rounded animate-pulse flex-1 sm:flex-none"></div>
+                        <div className="h-10 w-10 bg-gray-200 rounded animate-pulse flex-shrink-0"></div>
                       </div>
                     </div>
                   );
                 }
                 const avail = fetchedQuestions[sub]?.length || 0;
                 return (
-                  <div key={sub} className="flex flex-wrap items-center justify-between gap-4 p-4 border rounded-lg">
-                    <span className="w-32 capitalize text-lg font-medium">
+                  <div key={sub} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 border rounded-lg">
+                    <span className="w-full sm:w-[250px] capitalize text-base sm:text-lg font-medium truncate">
                       {sub.replace('_', ' ')} ({avail} available)
                     </span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-center sm:justify-start">
                       <Button
                         type="button"
                         size="icon"
                         variant="outline"
                         onClick={() => handleQuestionCountAdjust(sub, false)}
                         disabled={questionsPerSubject[sub] <= 1}
-                        className="h-10 w-10"
+                        className="h-10 w-10 flex-shrink-0"
                         aria-label={`Decrease questions for ${sub.replace('_', ' ')}`}
                       >
                         <Minus size={16} />
@@ -1046,7 +1043,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
                         max={avail}
                         value={questionsPerSubject[sub] || 0}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => handleQuestionCountChange(sub, e)}
-                        className="w-20 text-center h-10 text-lg"
+                        className="w-20 text-center h-10 text-base sm:text-lg flex-shrink-0"
                         aria-label={`Number of questions for ${sub.replace('_', ' ')}`}
                       />
                       <Button
@@ -1055,7 +1052,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
                         variant="outline"
                         onClick={() => handleQuestionCountAdjust(sub, true)}
                         disabled={questionsPerSubject[sub] >= avail}
-                        className="h-10 w-10"
+                        className="h-10 w-10 flex-shrink-0"
                         aria-label={`Increase questions for ${sub.replace('_', ' ')}`}
                       >
                         <Plus size={16} />
@@ -1072,7 +1069,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
       {/* Time Settings Section */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Time Settings</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl font-bold">Time Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-col space-y-4">
@@ -1083,11 +1080,11 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="difficulty" id="difficulty" className="h-5 w-5" />
-                <Label htmlFor="difficulty" className="text-lg">Difficulty-Based</Label>
+                <Label htmlFor="difficulty" className="text-base sm:text-lg cursor-pointer">Difficulty-Based</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="manual" id="manual" className="h-5 w-5" />
-                <Label htmlFor="manual" className="text-lg">Manual Time</Label>
+                <Label htmlFor="manual" className="text-base sm:text-lg cursor-pointer">Manual Time</Label>
               </div>
             </RadioGroup>
 
@@ -1101,25 +1098,25 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
                   transition={{ duration: 0.3 }}
                   className="space-y-4"
                 >
-                  <Label htmlFor="difficulty-select" className="block text-lg">
+                  <Label htmlFor="difficulty-select" className="block text-base sm:text-lg">
                     Difficulty Level
                   </Label>
                   <Select value={difficulty} onValueChange={setDifficulty}>
                     <SelectTrigger
                       id="difficulty-select"
-                      className="h-12 w-full text-lg"
+                      className="h-10 sm:h-12 w-full text-base sm:text-lg"
                     >
                       <SelectValue placeholder="Select difficulty" />
                     </SelectTrigger>
                     <SelectContent>
                       {difficultyLevels.map(level => (
-                        <SelectItem key={level.value} value={level.value} className="text-lg">
+                        <SelectItem key={level.value} value={level.value} className="text-base sm:text-lg">
                           {level.label} ({level.timePerQuestion}s per question)
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-base font-medium">
+                  <p className="text-sm sm:text-base font-medium">
                     Total time: {Math.floor(getTimeFromDifficulty() / 60)} min {getTimeFromDifficulty() % 60} sec
                   </p>
                 </motion.div>
@@ -1132,41 +1129,41 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
                   transition={{ duration: 0.3 }}
                   className="space-y-4"
                 >
-                  <Label className="block text-lg">Custom Time Limit</Label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <Label className="block text-base sm:text-lg">Custom Time Limit</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="hours" className="text-sm">Hours</Label>
+                      <Label htmlFor="hours" className="text-xs sm:text-sm">Hours</Label>
                       <Input
                         id="hours"
                         type="number"
                         placeholder="0"
                         value={hours}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => handleNumberInput(e.target.value, setHours, 0)}
-                        className="h-12 text-lg"
+                        className="h-10 sm:h-12 text-base sm:text-lg"
                         aria-label="Hours"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="minutes" className="text-sm">Minutes</Label>
+                      <Label htmlFor="minutes" className="text-xs sm:text-sm">Minutes</Label>
                       <Input
                         id="minutes"
                         type="number"
                         placeholder="0"
                         value={minutes}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => handleNumberInput(e.target.value, setMinutes, 0, 59)}
-                        className="h-12 text-lg"
+                        className="h-10 sm:h-12 text-base sm:text-lg"
                         aria-label="Minutes"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="seconds" className="text-sm">Seconds</Label>
+                      <Label htmlFor="seconds" className="text-xs sm:text-sm">Seconds</Label>
                       <Input
                         id="seconds"
                         type="number"
                         placeholder="0"
                         value={seconds}
                         onChange={(e: ChangeEvent<HTMLInputElement>) => handleNumberInput(e.target.value, setSeconds, 0, 59)}
-                        className="h-12 text-lg"
+                        className="h-10 sm:h-12 text-base sm:text-lg"
                         aria-label="Seconds"
                       />
                     </div>
@@ -1179,16 +1176,20 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
       </Card>
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 pt-4">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-3 sm:pt-4">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           type="button"
           onClick={handleStart}
-          disabled={!isFormValid() || loadingSubjects.size > 0}
-          className="flex-1 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white py-4 rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition text-lg shadow-lg"
+          disabled={!isFormValid() || loadingSubjects.size > 0 || isStartingQuiz}
+          className="flex-1 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold hover:from-blue-600 hover:to-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition text-base sm:text-lg shadow-lg"
         >
-          <Play className="mr-2" size={20} />
+          {isStartingQuiz ? (
+            <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
+          ) : (
+            <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+          )}
           Start Quiz
         </motion.button>
         <motion.button
@@ -1196,12 +1197,12 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
           whileTap={{ scale: 0.95 }}
           type="button"
           onClick={handleReset}
-          className="flex-1 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-4 rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition text-lg shadow-lg"
+          className="flex-1 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition text-base sm:text-lg shadow-lg"
         >
-          <RefreshCw className="mr-2" size={20} />
+          <RefreshCw className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
           Reset
         </motion.button>
       </div>
     </motion.form>
   );
-} 
+}
