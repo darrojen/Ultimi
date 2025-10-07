@@ -171,23 +171,23 @@ Ultimi is built using **modern web technologies and libraries** to ensure scalab
 ### ⚙️ Installation & Setup Instructions
 Follow these steps to run Ultimi locally:
 
-## Clone the repository:
+#### Clone the repository:
 ```text
 
 git clone https://github.com/<your-team>/<repository-name>.git
 cd <repository-name>
 ```
 
-## Install dependencies:
+#### Install dependencies:
 ```text
 
 npm install
 ```
 
 
+#### Create an environment file:
 ```text
 
-Create an environment file:
 In the project root, create a .env.local file and add the required environment variables (e.g., Supabase keys, AI API keys, email credentials). Example:
 
 NEXT_PUBLIC_SUPABASE_URL=
