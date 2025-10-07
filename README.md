@@ -174,8 +174,8 @@ Follow these steps to run Ultimi locally:
 #### Clone the repository:
 ```text
 
-git clone https://github.com/<your-team>/<repository-name>.git
-cd <repository-name>
+git clone https://github.com/darrojen/ultimi.git
+cd ultimi
 ```
 
 #### Install dependencies:
