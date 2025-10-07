@@ -199,6 +199,7 @@ GEMINI_API_KEY=
 NEXT_PUBLIC_API_URL=https://questions.aloc.com.ng/api/v2/q
 NEXT_PUBLIC_API_TOKEN=
 
+```
 
 
 Run the development server:
@@ -283,6 +284,7 @@ Once installed, you can:
 Folder Structure:
 
 ```text
+
 src/
  ├─ app/
  │   ├─ (auth)/
@@ -527,7 +529,7 @@ src/
  │   └─ index.ts
 
 
-
+```
 
 👥 Team Information:
 
