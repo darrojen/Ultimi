@@ -1326,7 +1326,6 @@ const calcStreakPoints = (currentStreak: number) => {
   ];
   return milestones.find(m => m.days === currentStreak)?.points || 0;
 };
-
 // Update streak and award points
 async function updateStreak(userId: string) {
   try {
@@ -1462,6 +1461,7 @@ export default function Quiz() {
     currentIndices,
     setCurrentIndices,
     userAnswers,
+    setUserAnswers, // Assuming this is added to the context for initialization
     examType,
     isStarting,
     calculateScores,
@@ -1475,7 +1475,7 @@ export default function Quiz() {
 
   const currentIndex = currentIndices[currentSubject] ?? 0;
   const totalQuestions = questions[currentSubject]?.length ?? 0;
-
+   
   const leagueThresholds = [
     { name: 'Palladium', min: 70, column: 'celebrated_palladium', component: PalladiumCelebration },
     { name: 'Bronze', min: 1300, column: 'celebrated_bronze', component: BronzeCelebration },
@@ -1484,6 +1484,16 @@ export default function Quiz() {
     { name: 'Platinum', min: 4300, column: 'celebrated_platinum', component: PlatinumCelebration },
     { name: 'Diamond', min: 5300, column: 'celebrated_diamond', component: DiamondCelebration },
   ];
+   
+  // Initialize userAnswers for the current subject if not already set
+  useEffect(() => {
+    if (questions && questions[currentSubject] && (!userAnswers || !userAnswers[currentSubject])) {
+      setUserAnswers(prev => ({
+        ...prev,
+        [currentSubject]: Array(questions[currentSubject].length).fill(-1),
+      }));
+    }
+  }, [questions, currentSubject, userAnswers, setUserAnswers]);
 
   // Save quiz state to localStorage
   useEffect(() => {
@@ -1807,14 +1817,15 @@ export default function Quiz() {
         <Box as="div" className="mt-6">
           <div className="flex flex-wrap justify-center gap-2">
             {questions[currentSubject]?.map((_, idx) => {
-              const isAnswered = userAnswers[currentSubject]?.[idx] !== -1;
+              const answer = userAnswers?.[currentSubject]?.[idx];
+              const isAnswered = answer !== undefined && answer !== -1;
               const isCurrent = currentIndex === idx;
               return (
                 <div
                   key={idx}
                   className={`w-10 h-10 flex items-center justify-center rounded-md cursor-pointer
                     border transition-colors duration-200
-                    ${isAnswered ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-400 border-gray-300'}
+                    ${isAnswered ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300'}
                     ${isCurrent ? 'ring-2 ring-blue-400' : ''}`}
                   onClick={() => jumpToQuestion(idx)}
                 >
