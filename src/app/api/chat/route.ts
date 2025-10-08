@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({}); // GEMINI_API_KEY auto-loaded from .env.local
+const ai = new GoogleGenAI({}); 
 
 let chatHistory: { role: "user" | "bot"; text: string }[] = [];
 
@@ -9,13 +9,11 @@ export async function POST(req: Request) {
   try {
     const { message, imageBase64, description, reset } = await req.json();
 
-    // 🔄 Reset chat if requested
     if (reset) {
       chatHistory = [];
       return NextResponse.json({ reply: "Chat history cleared successfully ✅" });
     }
 
-    // 🎭 Mood-based intros
     const moods = {
       friendly: [
         "Sure thing! Let’s look at that together.",
@@ -45,13 +43,12 @@ export async function POST(req: Request) {
     const moodIntros = moods[selectedMood];
     const randomIntro = moodIntros[Math.floor(Math.random() * moodIntros.length)];
 
-    // 🧠 System prompt
     let systemPrompt = `
 You are **ULTIMI Ai** — a smart, friendly, and conversational assistant created by Greg Okehie.
 Speak naturally like a helpful human companion — warm, confident, and encouraging.
 
 Never introduce yourself repeatedly in every message.
-You should only say “Hey, I’m ULTIMI Ai 😊” once — at the very start of a new conversation (when there is no chat history).
+You should only say “Hey, I’m Ultimi Ai 😊” once — at the very start of a new conversation (when there is no chat history).
 If the user later asks for your name, answer politely as usual.
 
 If asked "Who created you?", say "I was created by Greg Okehie, the amazing developer behind me."
@@ -127,7 +124,7 @@ This is the start of a new chat. Begin your first reply with a friendly introduc
 
     // ✨ Generate content using Gemini
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash",
       contents,
     });
 

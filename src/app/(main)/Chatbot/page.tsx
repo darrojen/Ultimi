@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
-import { Copy, ThumbsUp , ThumbsDown, RefreshCw, Edit } from "lucide-react";
+import { Copy, ThumbsUp, ThumbsDown, RefreshCw, Edit } from "lucide-react";
+import { toast } from "sonner";
 
 interface Message {
   sender: "user" | "bot";
@@ -29,7 +30,7 @@ export default function ChatbotPage() {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const messageIdRef = useRef(0);
 
-  const typeBotMessage = (fullText: string, tempMsgId: number, speed = 20) => {
+  const typeBotMessage = (fullText: string, tempMsgId: number, speed = 10) => {
     let index = 0;
     const interval = setInterval(() => {
       index++;
@@ -42,6 +43,14 @@ export default function ChatbotPage() {
       );
       if (index >= fullText.length) clearInterval(interval);
     }, speed);
+  };
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success("Copied to clipboard");
+    }).catch(() => {
+      toast.error("Failed to copy");
+    });
   };
 
   const handleLike = (id: number) => {
@@ -105,7 +114,12 @@ export default function ChatbotPage() {
           body: JSON.stringify({ imageBase64: base64Images, description: messageText }),
         });
         const data = await res.json();
-        typeBotMessage(data.reply, tempBotMsg.id, 20);
+        typeBotMessage(data.reply, tempBotMsg.id, 10);
+
+        // Revoke URLs after display
+        setTimeout(() => {
+          previews.forEach(URL.revokeObjectURL);
+        }, 1000);
       } catch {
         setMessages((prev) =>
           prev.map((m) =>
@@ -135,7 +149,7 @@ export default function ChatbotPage() {
         body: JSON.stringify({ message: messageText }),
       });
       const data = await res.json();
-      typeBotMessage(data.reply, tempBotMsg.id, 20);
+      typeBotMessage(data.reply, tempBotMsg.id, 10);
     } catch {
       setMessages((prev) =>
         prev.map((m) =>
@@ -159,7 +173,12 @@ export default function ChatbotPage() {
 
   const removePendingImage = (index: number) => {
     setPendingImages((prev) => prev.filter((_, i) => i !== index));
-    setPendingImagePreviews((prev) => prev.filter((_, i) => i !== index));
+    setPendingImagePreviews((prev) => {
+      const filtered = prev.filter((_, i) => i !== index);
+      // Revoke removed URL
+      URL.revokeObjectURL(prev[index]);
+      return filtered;
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -177,7 +196,7 @@ export default function ChatbotPage() {
       textareaRef.current.style.overflowY =
         textareaRef.current.scrollHeight > 200 ? "auto" : "hidden";
     }
-  }, [input, pendingImagePreviews]);
+  }, [input]);
 
   useEffect(() => {
     const chat = chatContainerRef.current;
@@ -215,74 +234,13 @@ export default function ChatbotPage() {
   };
 
   useEffect(() => {
-    const sphereDiv = document.querySelector<HTMLDivElement>(".sphere");
-    if (!sphereDiv) return;
-
-    const canvas = document.createElement("canvas");
-    sphereDiv.appendChild(canvas);
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const width = canvas.width = sphereDiv.offsetWidth;
-    const height = canvas.height = sphereDiv.offsetHeight;
-
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const radius = width / 2;
-
-    const particles = Array.from({ length: 100 }, () => {
-      const angle = Math.random() * Math.PI * 2;
-      const distance = Math.random() * radius * 0.8;
-      const z = Math.random() * radius;
-      return {
-        angle,
-        distance,
-        z,
-        speed: (Math.random() - 0.5) * 0.02,
-        r: Math.random() * 1.5 + 0.5,
-        hue: Math.random() < 0.5 ? 200 : 160, // Blue (200) or Green (160)
-        trail: [] as { x: number; y: number; alpha: number }[],
-      };
-    });
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height); // Clear canvas for transparency
-
-      particles.forEach((p) => {
-        p.angle += p.speed;
-        p.z -= 0.3;
-        if (p.z < 0) p.z = radius;
-
-        const scale = 0.5 + p.z / radius;
-        const x = centerX + p.distance * Math.cos(p.angle) * scale;
-        const y = centerY + p.distance * Math.sin(p.angle) * scale;
-
-        p.trail.push({ x, y, alpha: 1 });
-        if (p.trail.length > 8) p.trail.shift();
-
-        p.trail.forEach((point, i) => {
-          ctx.beginPath();
-          ctx.arc(point.x, point.y, p.r * scale * (i / p.trail.length), 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, ${point.alpha * (i / p.trail.length)})`;
-          ctx.fill();
-        });
-
-        ctx.beginPath();
-        ctx.arc(x, y, p.r * scale, 0, Math.PI * 2);
-        ctx.fillStyle = `hsl(${p.hue}, 80%, 70%)`;
-        ctx.shadowColor = `hsl(${p.hue}, 80%, 70%)`;
-        ctx.shadowBlur = 15; // Increased for techy glow
-        ctx.fill();
-      });
-
-      requestAnimationFrame(draw);
-    };
-
-    draw();
-
-    return () => {
-      canvas.remove();
-    };
+    if (messages.length === 0) {
+      const initId = messageIdRef.current++;
+      const initMsg: Message = { sender: "bot", text: "", typing: true, id: initId };
+      setMessages([initMsg]);
+      setIsTyping(true);
+      typeBotMessage("Hello! I'm Ultimi AI, your helpful assistant. How can I help you today?", initId, 10);
+    }
   }, []);
 
   return (
@@ -291,26 +249,11 @@ export default function ChatbotPage() {
         Ultimi Ai
       </h1>
 
-      {/* AI Sphere */}
-{messages.length === 0 && (
-  <div className="ai-sphere absolute top-[34%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0 opacity-30 pointer-events-none transition-opacity duration-700">
-    <div className="sphere relative w-full h-full"></div>
-  </div>
-)}
-
       {/* Chat Area */}
       <div
         ref={chatContainerRef}
         className="chat-container flex-1 mb-24 flex flex-col w-full md:w-2/3 gap-16 overflow-y-auto relative z-10"
       >
-        {messages.length === 0 && (
-  <div className="flex flex-col items-center justify-center mt-55 text-center animate-blink-text">
-    <p className="text-2xl sm:text-2xl font-semibold text-transparent bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 bg-clip-text drop-shadow-[0_0_10px_rgba(56,189,248,0.6)]">
-      Hi there 👋 How can I help you today?
-    </p>
-  </div>
-)}
-
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -319,9 +262,8 @@ export default function ChatbotPage() {
             <div
               className={`relative px-4 py-2 rounded-xl break-words max-w-[65ch] w-full sm:w-auto ${
                 msg.sender === "user"
-  ? "bg-blue-50 text-gray-700 shadow-md px-4 py-2 rounded-xl"
-  : "text-gray-900 dark:text-gray-200 prose prose-sm dark:prose-invert whitespace-pre-wrap"
-
+                  ? "bg-blue-50 text-gray-700 shadow-md px-4 py-2 rounded-xl"
+                  : "text-gray-900 dark:text-gray-200 prose prose-sm dark:prose-invert whitespace-pre-wrap"
               }`}
             >
               {msg.images?.map((img, i) => (
@@ -347,37 +289,34 @@ export default function ChatbotPage() {
               {msg.sender === "bot" && msg.typing && <span className="animate-blink">|</span>}
 
               {/* User hover icons (outside bubble) */}
-{msg.sender === "user" && (
-  <div className="absolute -bottom-6 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all pointer-events-auto">
-    <button title="Copy" className="hover:scale-110">
-      <Copy className="w-4 h-4 text-gray-700 dark:text-gray-200" />
-    </button>
-    <button title="Edit" className="hover:scale-110">
-      <Edit className="w-4 h-4 text-gray-700 dark:text-gray-200" />
-    </button>
-  </div>
-)}
+              {msg.sender === "user" && (
+                <div className="absolute -bottom-6 right-3 flex gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all pointer-events-auto">
+                  <button title="Copy" onClick={() => handleCopy(msg.text)} className="hover:scale-110">
+                    <Copy className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                  </button>
+                  <button title="Edit" className="hover:scale-110">
+                    <Edit className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                  </button>
+                </div>
+              )}
 
-{/* Bot icons (outside bubble) */}
-{msg.sender === "bot" && (
-  <div className="absolute -bottom-6 right-3 flex gap-2 translate-y-0 transition-all">
-
-    <button title="Copy" className="hover:scale-110">
-      <Copy className="w-4 h-4 text-gray-700 dark:text-gray-200" />
-    </button>
-    <button title="Like" onClick={() => handleLike(msg.id)} className="hover:scale-110">
-      <ThumbsUp className={`w-4 h-4 ${msg.liked ? "text-blue-500" : "text-gray-700 dark:text-gray-200"}`} />
-    </button>
-    <button title="Dislike" onClick={() => handleDislike(msg.id)} className="hover:scale-110">
-      <ThumbsDown className={`w-4 h-4 ${msg.disliked ? "text-red-500" : "text-gray-700 dark:text-gray-200"}`} />
-    </button>
-    <button title="Regenerate" className="hover:scale-110">
-      <RefreshCw className="w-4 h-4 text-gray-700 dark:text-gray-200" />
-    </button>
-  </div>
-)}
-
-
+              {/* Bot icons (outside bubble) */}
+              {msg.sender === "bot" && !msg.typing && (
+                <div className="absolute -bottom-6 right-3 flex gap-2 translate-y-0 transition-all">
+                  <button title="Copy" onClick={() => handleCopy(msg.text)} className="hover:scale-110">
+                    <Copy className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                  </button>
+                  <button title="Like" onClick={() => handleLike(msg.id)} className="hover:scale-110">
+                    <ThumbsUp className={`w-4 h-4 ${msg.liked ? "text-blue-500" : "text-gray-700 dark:text-gray-200"}`} />
+                  </button>
+                  <button title="Dislike" onClick={() => handleDislike(msg.id)} className="hover:scale-110">
+                    <ThumbsDown className={`w-4 h-4 ${msg.disliked ? "text-red-500" : "text-gray-700 dark:text-gray-200"}`} />
+                  </button>
+                  <button title="Regenerate" className="hover:scale-110">
+                    <RefreshCw className="w-4 h-4 text-gray-700 dark:text-gray-200" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -549,77 +488,6 @@ export default function ChatbotPage() {
         }
         .delay-200 {
           animation-delay: 0.2s;
-        }
-        .ai-sphere {
-          width: 120px;
-          height: 120px;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        .sphere {
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(
-            circle at 30% 30%,
-            rgba(0, 150, 255, 0.8) 0%,
-            rgba(0, 80, 180, 0.6) 50%,
-            rgba(0, 30, 100, 0.3) 100%
-          );
-          border-radius: 50%;
-          box-shadow:
-            0 0 30px rgba(0, 150, 255, 1),
-            0 0 60px rgba(0, 200, 255, 0.6),
-            inset 0 0 15px rgba(0, 150, 255, 0.7);
-          animation: pulse 3s ease-in-out infinite, rotate 20s linear infinite;
-          position: relative;
-          overflow: hidden;
-        }
-        .sphere canvas {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
-          z-index: 1;
-        }
-        @keyframes pulse {
-          0% {
-            transform: scale(0.9);
-            box-shadow:
-              0 0 30px rgba(0, 150, 255, 1),
-              0 0 60px rgba(0, 200, 255, 0.6),
-              inset 0 0 15px rgba(0, 150, 255, 0.7);
-          }
-          50% {
-            transform: scale(1.1);
-            box-shadow:
-              0 0 50px rgba(0, 150, 255, 1.2),
-              0 0 80px rgba(0, 200, 255, 0.8),
-              inset 0 0 20px rgba(0, 150, 255, 0.9);
-          }
-          100% {
-            transform: scale(0.9);
-            box-shadow:
-              0 0 30px rgba(0, 150, 255, 1),
-              0 0 60px rgba(0, 200, 255, 0.6),
-              inset 0 0 15px rgba(0, 150, 255, 0.7);
-          }
-        }
-        @keyframes rotate {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-        @media (max-width: 768px) {
-          .ai-sphere {
-            width: 80px;
-            height: 80px;
-          }
         }
       `}</style>
     </div>
