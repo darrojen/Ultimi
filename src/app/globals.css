@@ -928,3 +928,17 @@ html.light ::-webkit-scrollbar-thumb:hover {
 [data-theme="dark"] .dropdown-icon.active {
   color: #000;
 }
+ @keyframes blinkText {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.4;
+    filter: brightness(1.3);
+  }
+}
+
+.animate-blink-text {
+  animation: blinkText 1.6s ease-in-out infinite;
+}

@@ -1,17 +1,145 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, ChevronDown } from "lucide-react";
 
-const flashcards = [
-  { question: "What is the atomic number of oxygen?", answer: "The atomic number of oxygen is 8." },
-  { question: "What is Newton's second law of motion?", answer: "Force equals mass times acceleration (F = ma)." },
-  { question: "What is the powerhouse of the cell?", answer: "The mitochondrion." },
-];
+// Flashcards for all subjects and topics (Nigerian curriculum, 3–5 questions per topic example)
+const flashcardsData: Record<string, Record<string, { question: string; answer: string }[]>> = {
+  mathematics: {
+    algebra: [
+      { question: "Simplify: 2x + 5x", answer: "7x" },
+      { question: "Factorize: x^2 + 5x", answer: "x(x + 5)" },
+      { question: "Solve: 2x - 3 = 7", answer: "x = 5" },
+    ],
+    trigonometry: [
+      { question: "sin^2θ + cos^2θ = ?", answer: "1" },
+      { question: "tan θ = ?", answer: "sin θ / cos θ" },
+    ],
+    statistics: [
+      { question: "Mean of 2, 4, 6?", answer: "4" },
+      { question: "Mode of 2, 2, 3, 4?", answer: "2" },
+    ],
+    // add other math topics similarly...
+  },
+  physics: {
+    mechanics: [
+      { question: "Force formula?", answer: "F = ma" },
+      { question: "Unit of mass?", answer: "kg" },
+    ],
+    electricity: [
+      { question: "Ohm's Law?", answer: "V = IR" },
+      { question: "Unit of current?", answer: "Ampere" },
+    ],
+    waves: [
+      { question: "Wave speed formula?", answer: "v = fλ" },
+      { question: "Wavelength definition?", answer: "Distance between crests or troughs" },
+    ],
+    // add other physics topics...
+  },
+  chemistry: {
+    "atomic-structure": [
+      { question: "Number of protons in oxygen?", answer: "8" },
+      { question: "Define isotope", answer: "Atoms with same protons but different neutrons" },
+    ],
+    "chemical-bonding": [
+      { question: "Ionic bond definition?", answer: "Transfer of electrons between atoms" },
+      { question: "Covalent bond definition?", answer: "Sharing of electrons" },
+    ],
+    // add other chemistry topics...
+  },
+  biology: {
+    "cell-biology": [
+      { question: "Function of mitochondria?", answer: "Produces energy (ATP)" },
+      { question: "Nucleus function?", answer: "Control center of the cell" },
+    ],
+    genetics: [
+      { question: "What is DNA?", answer: "Genetic material" },
+      { question: "What is a gene?", answer: "Segment of DNA coding for a trait" },
+    ],
+  },
+  english: {
+    grammar: [
+      { question: "What is a noun?", answer: "Person, place, or thing" },
+      { question: "What is a verb?", answer: "Action or state word" },
+    ],
+    literature: [
+      { question: "Author of Things Fall Apart?", answer: "Chinua Achebe" },
+      { question: "Define allegory", answer: "Story with symbolic meaning" },
+    ],
+  },
+  history: {
+    nigeria: [
+      { question: "Nigeria Independence date?", answer: "1st October 1960" },
+      { question: "First President?", answer: "Nnamdi Azikiwe" },
+    ],
+    world: [
+      { question: "Start of WWI?", answer: "28 July 1914" },
+      { question: "Start of WWII?", answer: "1 Sept 1939" },
+    ],
+  },
+  government: {
+    democracy: [
+      { question: "Define democracy?", answer: "Government by the people" },
+      { question: "Executive leader?", answer: "President or Governor" },
+    ],
+  },
+  economics: {
+    microeconomics: [
+      { question: "Define demand?", answer: "Quantity buyers want at a price" },
+      { question: "Define supply?", answer: "Quantity sellers offer at a price" },
+    ],
+    macroeconomics: [
+      { question: "What is GDP?", answer: "Value of goods and services in a country" },
+      { question: "Inflation?", answer: "Increase in general price level" },
+    ],
+  },
+  "christian-religious-studies-(crs)": {
+    creation: [
+      { question: "Who created the world?", answer: "God" },
+      { question: "Days of creation?", answer: "6 days" },
+    ],
+  },
+  "islamic-religious-studies-(irs)": {
+    creation: [
+      { question: "Who created the world?", answer: "Allah" },
+      { question: "Islam's holy book?", answer: "Qur'an" },
+    ],
+  },
+  commerce: {
+    basics: [
+      { question: "Define commerce?", answer: "Buying and selling of goods and services" },
+      { question: "Define trade?", answer: "Exchange of goods for money" },
+    ],
+  },
+  accounting: {
+    basics: [
+      { question: "Assets formula?", answer: "Assets = Liabilities + Equity" },
+      { question: "Define revenue?", answer: "Income from business" },
+    ],
+  },
+  "igbo-language": {
+    grammar: [
+      { question: "Hello in Igbo?", answer: "Ndewo" },
+      { question: "Thank you in Igbo?", answer: "Daalụ" },
+    ],
+  },
+  geography: {},
+  "further-mathematics": {},
+  "technical-drawing": {},
+  "computer-science": {},
+  "data-processing": {},
+  "agricultural-science": {},
+  "civic-education": {},
+  french: {},
+  "literature-in-english": {},
+};
 
 export default function FlashcardsPage() {
+  const router = useRouter();
+  const { subject, topic } = useParams();
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [direction, setDirection] = useState(1);
@@ -19,8 +147,19 @@ export default function FlashcardsPage() {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [speakerActive, setSpeakerActive] = useState(false); // track speaker clicked
+  const [speakerActive, setSpeakerActive] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Get flashcards for selected subject/topic
+  let flashcards = flashcardsData[subject as string]?.[topic as string] || [
+    { question: "No flashcards available.", answer: "This topic has no questions yet." },
+  ];
+
+  // Shuffle questions when subject or topic changes
+  useEffect(() => {
+    flashcards = flashcards.sort(() => Math.random() - 0.5);
+    setCurrent(0);
+  }, [subject, topic]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -37,19 +176,15 @@ export default function FlashcardsPage() {
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
-
       const zira = availableVoices.find(v => v.name.toLowerCase().includes("zira"));
       const googleUK = availableVoices.find(v => v.name.toLowerCase().includes("uk english"));
       const mark = availableVoices.find(v => v.name.toLowerCase().includes("mark"));
       const david = availableVoices.find(v => v.name.toLowerCase().includes("david"));
       const susan = availableVoices.find(v => v.name.toLowerCase().includes("susan"));
-
       const orderedVoices = [zira, susan, googleUK, mark, david].filter(Boolean) as SpeechSynthesisVoice[];
-
       setVoices(orderedVoices);
       if (orderedVoices.length > 0) setSelectedVoice(orderedVoices[0]);
     };
-
     window.speechSynthesis.onvoiceschanged = loadVoices;
     loadVoices();
   }, []);
@@ -92,7 +227,7 @@ export default function FlashcardsPage() {
 
   return (
     <div className="p-6 flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-6">Flashcards</h1>
+      <h1 className="text-2xl font-bold mb-6">{topic?.replace(/-/g, " ")}</h1>
 
       <div className="w-77 h-90 relative">
         <AnimatePresence initial={false} custom={direction} mode="wait">
@@ -108,7 +243,6 @@ export default function FlashcardsPage() {
             whileHover={{ scale: 1.03, boxShadow: "0px 8px 20px rgba(0,0,0,0.25)" }}
             whileTap={{ scale: 0.98 }}
           >
-            {/* Card Text */}
             <AnimatePresence mode="wait">
               <motion.p
                 key={flipped ? "answer" : "question"}
@@ -123,14 +257,13 @@ export default function FlashcardsPage() {
               </motion.p>
             </AnimatePresence>
 
-            {/* Speaker Icon */}
             <motion.div
               className={`absolute bottom-2 right-2 cursor-pointer p-1 rounded-full flex items-center z-30 hover:bg-gray-200`}
               style={{ rotateY: flipped ? 180 : 0 }}
               onClick={(e) => {
                 e.stopPropagation();
                 setAutoRead(!autoRead);
-                setSpeakerActive(!speakerActive); // toggle clicked state
+                setSpeakerActive(!speakerActive);
               }}
             >
               <Volume2
@@ -138,7 +271,6 @@ export default function FlashcardsPage() {
               />
             </motion.div>
 
-            {/* Dropdown Icon */}
             <motion.div
               className="absolute top-2 right-2 cursor-pointer p-1 hover:bg-gray-100 rounded-full z-30 dropdown-wrapper"
               style={{ rotateY: flipped ? 180 : 0 }}
@@ -152,7 +284,6 @@ export default function FlashcardsPage() {
               />
             </motion.div>
 
-            {/* Animated Dropdown Menu */}
             <AnimatePresence>
               {dropdownOpen && (
                 <motion.div
@@ -187,17 +318,19 @@ export default function FlashcardsPage() {
         </AnimatePresence>
       </div>
 
-      {/* Buttons */}
       <div className="flex gap-4 mt-6 w-96 justify-center">
         <Button onClick={prevCard}>Previous</Button>
         <Button onClick={nextCard}>Next</Button>
       </div>
 
-      {/* Card Counter */}
-      <p className="mt-4 text-sm text-gray-500 w-96 text-center">
-        Card {current + 1} of {flashcards.length}
-      </p>
+      <div className="mt-6 flex justify-center">
+        <Button
+          className="bg-blue-700 text-white hover:bg-blue-800 dark:hover:bg-blue-600 transition-colors duration-300"
+          onClick={() => router.push(`/flashCard/${subject}`)}
+        >
+          ← Back to Topics
+        </Button>
+      </div>
     </div>
   );
 }
-
