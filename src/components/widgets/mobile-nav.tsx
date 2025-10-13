@@ -57,7 +57,7 @@ export const mainMobileNavItems: NavItem[] = [
 export const moreMobileNavItems: NavItem[] = [
   { title: 'Progress', url: '/progress', icon: ChartNoAxesCombined },
   { title: 'Sponsors', url: '/sponsors', icon: HandHelping },
-  { title: 'Ultimi AI', url: '/chatbot', icon: Cpu },
+  { title: 'Ultimi AI', url: '/Chatbot', icon: Cpu },
   { title: 'Flashcards', url: '/flashCard', icon: SwatchBook },
   { title: 'Notifications', url: '/notifications', icon: Bell },
   { title: 'Messages', url: '/messages', icon: MessageCircle },
