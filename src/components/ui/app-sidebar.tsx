@@ -190,7 +190,7 @@ export default function AppSidebar() {
   const navItems = [
     { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
     { title: 'Quiz', url: '/quiz', icon: BookOpenCheck },
-    { title: 'Ultimi Ai', url: '/chatbot', icon: Bot },
+    { title: 'Ultimi Ai', url: '/Chatbot', icon: Bot },
     { title: 'Flashcards', url: '/flashCard', icon: SwatchBook },
     { title: "Leaderboard", url: '/leaderboard', icon: Award },
     { title: 'Progress', url: '/progress', icon: ChartNoAxesCombined },
