@@ -3,7 +3,6 @@ import { Badge } from '@/components/ui/badge';
 import Box from '@/components/ui/box';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ConnectedUser } from '@/lib/types';
-import {  AudioWaveform, Pause, Play } from 'lucide-react';
 
 interface ChatListProps {
   isLoadingUsers: boolean;

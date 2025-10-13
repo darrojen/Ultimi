@@ -40,8 +40,12 @@ export default function SubjectsPage() {
   }
 
   return (
-    <main className="flex justify-center items-start min-h-screen p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <main className="flex justify-center items-start min-h-screen p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 pb-20 sm:pb-0">
       <Card className="w-full max-w-5xl p-6 sm:p-8 bg-white dark:bg-gray-800 shadow-xl transition-colors duration-300">
+          <head>
+        <title>Flash Cards | Ultimi</title>
+        <meta name="description" content="Learn more about us." />
+      </head>
         <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-gray-900 dark:text-gray-100">
           Pick a subject
         </h1>

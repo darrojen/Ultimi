@@ -58,7 +58,6 @@ export const useDataFetch = () => {
     console.error('Query error:', error);
   }
     // eslint-disable-next-line react-hooks/exhaustive-deps 
-
   const memoizedData = useMemo(() => data, [data.length, sortOrder]);
 
   return { data: memoizedData, filteredData: memoizedData, isLoading, sortOrder, setSortOrder };

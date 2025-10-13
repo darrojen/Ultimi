@@ -3188,7 +3188,7 @@
 
 'use client';
 
-import { ArrowDown, Heart, MessageCircle, ThumbsDown, Plus, SmilePlus } from 'lucide-react';
+import { ArrowDown, Heart, MessageCircle, ThumbsDown, SmilePlus } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { Card, CardContent } from '@/components/ui/card';

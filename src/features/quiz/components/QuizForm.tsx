@@ -573,6 +573,7 @@ interface QuizFormProps {
 type QuestionItem = {
   question: string
   option: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 };
 
@@ -605,12 +606,12 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
       ? 4
       : Infinity;
 
-  const availableSubjects =
-    route === 'science'
-      ? scienceSubjects
-      : route === 'arts'
-      ? artsSubjects
-      : [...scienceSubjects, ...artsSubjects];
+  // const availableSubjects =
+  //   route === 'science'
+  //     ? scienceSubjects
+  //     : route === 'arts'
+  //     ? artsSubjects
+  //     : [...scienceSubjects, ...artsSubjects];
 
   // Mapping internal subjects to API subjects
   const subjectMapping: Record<string, string> = {
@@ -656,6 +657,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
       });
       if (!response.ok) {
         const errorData = await response.json();
+        console.log({response})
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
       const apiData = await response.json();
@@ -666,6 +668,7 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
       // Process each API question to match Question type
       const questions: Question[] = rawQuestions
         .filter((q: QuestionItem | null | undefined) => q && q.question && q.option)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((q: any): Question => {
           const opts = [
             q.option.a,
@@ -728,12 +731,15 @@ export default function QuizForm({ route, examType, onBack }: QuizFormProps) {
     if (selectedSubjects.length > 0 && selectedSubjects.some(sub => !fetchedQuestions[sub])) {
       loadAllQuestions();
     }
+        // eslint-disable-next-line react-hooks/exhaustive-deps 
+
   }, [selectedSubjects, examType, fetchedQuestions]);
 
   useEffect(() => {
     // Clear cache if examType changes
     Object.keys(fetchedQuestions).forEach(sub => localStorage.removeItem(`questions_${sub}_${examType}`));
     setFetchedQuestions({});
+  // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [examType]);
 
   const handleSubjectChange = (sub: string, checked: boolean) => {

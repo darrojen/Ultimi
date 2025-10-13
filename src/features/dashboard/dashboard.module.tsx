@@ -2,6 +2,8 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Head from "next/head";
+
 import {
   Carousel,
   CarouselContent,
@@ -340,10 +342,10 @@ export const DashboardModule = () => {
           : 'bg-[#16161a] text-gray-100'
       } flex-1 grid grid-cols-1 gap-6`}
     >
-      <head>
+      <Head>
         <title>Dashboard | Ultimi</title>
         <meta name="description" content="Learn more about us." />
-      </head>
+      </Head>
       <h1
         className={`text-2xl sm:text-3xl font-bold mb-6 text-center sm:text-left bg-gradient-to-r ${
           theme === 'custom'

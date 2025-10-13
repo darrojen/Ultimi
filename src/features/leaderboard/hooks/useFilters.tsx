@@ -62,8 +62,7 @@ export const useFilters = () => {
     (page: number ) => {
       dispatch({ type: 'CHANGE_PAGE', payload: page })
     },
-        // eslint-disable-next-line react-hooks/exhaustive-deps 
-
+   // eslint-disable-next-line react-hooks/exhaustive-deps 
     [filters, dispatch]
   )
 

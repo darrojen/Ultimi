@@ -12,11 +12,12 @@ import { useRealtimeMessages } from './hooks/useRealtimeMessages';
 import { useScrollBehavior } from './hooks/useScrollBehavior';
 import { useSidebar } from './hooks/useSidebar';
 import { ChatHeader } from './components/chat-header';
-import { ChatList } from './components/chat-list';
+// import { ChatList } from './components/chat-list';
 import { MessageList } from './components/message-list';
 import { MessageInput } from './components/message-input';
 import { toast } from 'sonner';
 import  Box  from '@/components/ui/box';
+import Head from "next/head";
 
 export default function MessageModule() {
   const [chatMessage, setChatMessage] = useState('');
@@ -45,7 +46,7 @@ export default function MessageModule() {
   const { showScrollDown, messagesEndRef, messageContainerRef, scrollToBottom } =
     useScrollBehavior(messages);
 
-  const { isSidebarOpen, setIsSidebarOpen, sidebarRef } = useSidebar();
+  const { setIsSidebarOpen } = useSidebar();
   const router = useRouter();
 
   useRealtimeMessages(
@@ -105,10 +106,10 @@ export default function MessageModule() {
   return (
     <Box as='div' className="grid grid-cols-1 md:grid-cols-[auto_1fr] w-full min-h-screen dark:bg-gray-900 relative">
       <Box as='main' className="flex flex-col h-screen w-full absolute">
-        <head>
+        <Head>
         <title>Messages | Ultimi</title>
         <meta name="description" content="Learn more about us." />
-      </head>
+      </Head>
         <ChatHeader
           chatUserId={chatUserId}
           chatUsername={chatUsername}

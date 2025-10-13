@@ -52,6 +52,7 @@ export const useQuizScores = () => {
         }
       } catch (err) {
         setError('Failed to fetch scores')
+        console.log(err)
       } finally {
         setLoading(false)
       }

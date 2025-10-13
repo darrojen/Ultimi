@@ -9,6 +9,7 @@ import { useTheme } from 'next-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { LeaderboardTable } from '@/features/leaderboard/components';
 import { useLeaderboardFilters } from '@/features/leaderboard/hooks';
+import Head from "next/head";
 
 
 const queryClient = new QueryClient();
@@ -33,10 +34,10 @@ function LeaderboardContent() {
 
   return (
     <div className="p-6 min-h-screen">
-      <head>
+      <Head>
         <title>Leaderboard | Ultimi</title>
         <meta name="description" content="Learn more about us." />
-      </head>
+      </Head>
       <Card className="mb-6 rounded-lg">
         <CardHeader className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <CardTitle className="text-lg font-semibold">Leaderboard</CardTitle>

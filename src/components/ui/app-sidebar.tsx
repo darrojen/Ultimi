@@ -33,10 +33,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 
 import type { AuthUser } from '@supabase/supabase-js'
 import { Badge } from '@/components/ui/badge';
@@ -192,7 +190,7 @@ export default function AppSidebar() {
   const navItems = [
     { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
     { title: 'Quiz', url: '/quiz', icon: BookOpenCheck },
-    { title: 'Ultimi Ai', url: '/Chatbot', icon: Bot },
+    { title: 'Ultimi Ai', url: '/chatbot', icon: Bot },
     { title: 'Flashcards', url: '/flashCard', icon: SwatchBook },
     { title: "Leaderboard", url: '/leaderboard', icon: Award },
     { title: 'Progress', url: '/progress', icon: ChartNoAxesCombined },

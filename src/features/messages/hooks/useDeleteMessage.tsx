@@ -65,6 +65,7 @@ export function useDeleteMessage() {
       queryClient.invalidateQueries({ queryKey: ['messages'] });
       toast.success('Message deleted');
     },
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (err: any) => {
       console.error('Delete message failed:', err);
       toast.error('Failed to delete message');

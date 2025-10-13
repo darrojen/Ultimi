@@ -398,6 +398,10 @@ export default function ProfileSetupPage() {
 
   return (
     <motion.div className={`min-h-screen flex-1 p-4 sm:p-6 lg:p-8 ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'} ${theme === 'system' ? 'bg-gray-900 text-white' : ''}`}>
+        <head>
+        <title>Account | Ultimi</title>
+        <meta name="description" content="Learn more about us." />
+      </head>
       <motion.div
         className="w-full p-4 sm:p-6  rounded-lg mb-6 sm:mb-8 grid grid-cols-1 sm:grid-cols-[auto,1fr] items-center justify-between gap-4"
         initial={{ opacity: 0, y: -8 }}

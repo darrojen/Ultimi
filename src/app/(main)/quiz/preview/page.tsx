@@ -238,6 +238,7 @@ export default function Preview() {
     }
 
     setReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty deps - only on mount
 
   // Save currentIndex to localStorage

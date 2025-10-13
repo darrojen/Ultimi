@@ -39,7 +39,7 @@ export const ActivityCalendar: React.FC<ActivityCalendarProps> = ({
   const [initialScrollDone, setInitialScrollDone] = useState(false)
   const currentDate = useCurrentDate()
   const currentYear = new Date().getFullYear()
-
+   console.log({selectedMonth})
   const allCalendarDays = useMemo(() => {
     return months.map((month) => {
       const firstDay = new Date(Date.UTC(selectedYear, month.index, 1))

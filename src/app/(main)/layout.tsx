@@ -6,7 +6,6 @@ import Box from '@/components/ui/box'
 import ProtectedRoute from '@/components/ui/ProtectedRoute'
 import Sidebar from '@/components/ui/app-sidebar'
 import { ThemeProvider } from 'next-themes'
-import { cn } from '@/lib/utils'
 
 export default function MainLayout({
   children,
@@ -23,11 +22,6 @@ export default function MainLayout({
     </ThemeProvider>
   )
 }
- // Base classes for the button
-   const buttonClasses = cn(
-    'top-[20px] z-[1000] cursor-pointer left-[20px] fixed',
-    'hover:text-primary-dark',
-  );
 
 function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

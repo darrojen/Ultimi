@@ -65,6 +65,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
+import Head from "next/head";
 // import { cn } from '@/lib/utils'
 import { useActivityData, useAggregatedData, useAvailableYears, useQuizScores } from '@/features/progress/hooks'
 import { ActivityCalendar, ProgressChart } from '@/features/progress/components'
@@ -100,10 +101,10 @@ export default function ProgressPage() {
   return (
     <Box as="div" className={`min-h-screen flex-1 p-2 xs414:p-4 sm:p-6 lg:p-8 transition-all duration-500 ${theme === 'custom' ? 'bg-slate-50' : theme === 'light' ? 'bg-gray-100' : 'bg-gray-900'}`}>
       <Box as="div" className=" max-w-7xl mx-auto w-full grid grid-cols-1 tab1024:grid-cols-2 gap-2 xs414:gap-4 sm:gap-6 lg:gap-8">
-        <head>
+        <Head>
         <title>Progress | Ultimi</title>
         <meta name="description" content="Learn more about us." />
-      </head>
+      </Head>
         <ProgressChart
           aggregatedData={aggregatedData}
           loading={loading}

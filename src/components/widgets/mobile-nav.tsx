@@ -57,7 +57,7 @@ export const mainMobileNavItems: NavItem[] = [
 export const moreMobileNavItems: NavItem[] = [
   { title: 'Progress', url: '/progress', icon: ChartNoAxesCombined },
   { title: 'Sponsors', url: '/sponsors', icon: HandHelping },
-  { title: 'Ultimi AI', url: '/ultimi-ai', icon: Cpu },
+  { title: 'Ultimi AI', url: '/chatbot', icon: Cpu },
   { title: 'Flashcards', url: '/flashCard', icon: SwatchBook },
   { title: 'Notifications', url: '/notifications', icon: Bell },
   { title: 'Messages', url: '/messages', icon: MessageCircle },
@@ -354,6 +354,7 @@ const fetchUnreadMessageCount = async (userId: string): Promise<number> => {
 export function MobileNavigation() {
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const [unreadMessageCount, setUnreadMessageCount] = useState<number>(0);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
